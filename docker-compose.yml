@@ -1,0 +1,78 @@
+version: "3.9"
+
+services:
+
+  # ── Frontend (Nginx serving built React app) ─────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_URL=https://api.kros.yourcompany.com.my
+    restart: unless-stopped
+    networks:
+      - kros-net
+
+  # ── Backend (Node.js + Express) ──────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - FRONTEND_URL=https://kros.yourcompany.com.my
+      # AI Keys — set in .env or via Docker secrets
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - AI_ROUTING_MODE=${AI_ROUTING_MODE:-auto}
+      - DEEPSEEK_ALLOWED_SENSITIVITY=low
+      # Auth
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=8h
+      # Database
+      - DATABASE_URL=postgresql://kros:${DB_PASSWORD}@postgres:5432/kros_db
+      # Skills directory mounted as volume
+      - SKILLS_DIR=/app/skills
+    volumes:
+      - skills-data:/app/skills
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - kros-net
+
+  # ── PostgreSQL database ──────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=kros
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=kros_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kros -d kros_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - kros-net
+
+volumes:
+  postgres-data:
+  skills-data:
+
+networks:
+  kros-net:
+    driver: bridge
