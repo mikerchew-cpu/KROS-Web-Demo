@@ -8,12 +8,14 @@ import SuccessionMap from "./pages/SuccessionMap";
 import ExitCapture from "./pages/ExitCapture";
 import Compliance, { Settings } from "./pages/Compliance";
 import LoginPage from "./pages/LoginPage";
+import LandingPage from "./pages/LandingPage";
 import "./styles/globals.css";
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [activePage, setActivePage] = useState("dashboard");
   const [theme, setTheme] = useState(() => localStorage.getItem("kros_theme") || "dark");
+  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -30,6 +32,7 @@ export default function App() {
   const handleLogin = (u) => { localStorage.setItem("kros_user", JSON.stringify(u)); setUser(u); };
   const handleLogout = () => { localStorage.removeItem("kros_user"); setUser(null); };
 
+  if (!user && !showLogin) return <LandingPage onGetStarted={() => setShowLogin(true)} theme={theme} onToggleTheme={toggleTheme} />;
   if (!user) return <LoginPage onLogin={handleLogin} />;
 
   const pages = {
