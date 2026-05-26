@@ -138,6 +138,7 @@ export function Compliance() {
 export function Settings({ user, onLogout }) {
   const [claudeKey, setClaudeKey]     = useState("sk-ant-••••••••••••••••");
   const [deepseekKey, setDeepseekKey] = useState("sk-••••••••••••••••");
+  const [geminiKey, setGeminiKey]     = useState("AIza••••••••••••••••••");
   const [routing, setRouting]         = useState("auto");
   const [saved, setSaved]             = useState(false);
 
@@ -158,7 +159,7 @@ export function Settings({ user, onLogout }) {
           <div className="card-header">
             <div>
               <div className="card-title">AI Engine Configuration</div>
-              <div className="card-subtitle">Configure Claude and DeepSeek API keys</div>
+              <div className="card-subtitle">Configure AI engine API keys</div>
             </div>
           </div>
 
@@ -179,15 +180,22 @@ export function Settings({ user, onLogout }) {
           <div className="form-group">
             <label className="form-label">◈ DeepSeek API Key</label>
             <input type="password" className="form-input" value={deepseekKey} onChange={e => setDeepseekKey(e.target.value)} />
-            <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>Model: deepseek-chat · Used for: low sensitivity queries only · ⚠ No personal/financial data</div>
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>Model: deepseek-chat</div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">◉ Google Gemini API Key</label>
+            <input type="password" className="form-input" value={geminiKey} onChange={e => setGeminiKey(e.target.value)} />
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>Model: gemini-2.0-flash</div>
           </div>
 
           <div className="form-group">
             <label className="form-label">AI Routing Mode</label>
             <select className="form-select" value={routing} onChange={e => setRouting(e.target.value)}>
-              <option value="auto">Auto (Smart routing by sensitivity)</option>
+              <option value="auto">Auto (default Claude)</option>
               <option value="claude">Force Claude for all queries</option>
               <option value="deepseek">Force DeepSeek for all queries</option>
+              <option value="gemini">Force Gemini for all queries</option>
             </select>
             {routing === "deepseek" && (
               <div className="alert alert-error" style={{ marginTop: 8, fontSize: 11 }}>
@@ -257,6 +265,7 @@ export function Settings({ user, onLogout }) {
             { label: "Database",           value: "PostgreSQL 15" },
             { label: "Claude Endpoint",    value: "https://api.anthropic.com/v1/messages" },
             { label: "DeepSeek Endpoint",  value: "https://api.deepseek.com/chat/completions" },
+            { label: "Gemini Endpoint",    value: "https://generativelanguage.googleapis.com/v1beta/models" },
             { label: "Auth",               value: "JWT + bcrypt" },
             { label: "Version",            value: "KROS v2.0 — Claude Edition" },
           ].map(({ label, value }) => (
