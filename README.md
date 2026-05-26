@@ -2,6 +2,8 @@
 ## Knowledge Retention & Operations System
 ### Powered by Anthropic Claude + DeepSeek AI
 
+**🔗 Live Demo:** https://mikerchew-cpu.github.io/KROS-Web-Demo/
+
 ---
 
 ## Stack
