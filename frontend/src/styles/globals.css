@@ -58,18 +58,18 @@
   --green:      #8CB08A;
   --green-light:#A8C8A6;
 
-  --surface-0:  #F5F0EB;
-  --surface-1:  #FDFCFA;
-  --surface-2:  #EDE8E1;
-  --surface-3:  #E5DED5;
-  --surface-4:  #D8CFC4;
+  --surface-0:  #E8E5E0;
+  --surface-1:  #F0EDE8;
+  --surface-2:  #D8D5D0;
+  --surface-3:  #CCC8C2;
+  --surface-4:  #BFBAB3;
 
-  --border:     rgba(0,0,0,0.06);
+  --border:     rgba(0,0,0,0.08);
   --border-act: rgba(196,163,90,0.5);
 
-  --text-primary:   #3A3530;
-  --text-secondary: #7A7268;
-  --text-muted:     #B0A79C;
+  --text-primary:   #2A2724;
+  --text-secondary: #6B655C;
+  --text-muted:     #9C958C;
 
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
   --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
