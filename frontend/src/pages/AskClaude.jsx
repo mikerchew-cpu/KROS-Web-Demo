@@ -166,7 +166,7 @@ export default function AskClaude({ user }) {
       <div className="page-header" style={{ flexShrink: 0, marginBottom: 16 }}>
         <div>
           <div className="page-title">Ask KROS AI</div>
-          <div className="page-subtitle">Your 24/7 operational knowledge guide — powered by Claude &amp; DeepSeek</div>
+          <div className="page-subtitle">Your 24/7 operational knowledge guide — powered by Claude, DeepSeek &amp; Gemini</div>
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>Smart routing:</div>
@@ -209,8 +209,8 @@ export default function AskClaude({ user }) {
         {currentSensitivity && (
           <div style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: "var(--text-muted)" }}>
             <span>Auto-routing to:</span>
-            <span className={`badge badge-${currentEngine === "claude" ? "purple" : "teal"}`}>
-              {currentEngine === "claude" ? "✦ Claude (claude-sonnet-4-6)" : "◈ DeepSeek (deepseek-chat)"}
+            <span className={`badge badge-${currentEngine === "claude" ? "purple" : currentEngine === "gemini" ? "gold" : "teal"}`}>
+              {currentEngine === "claude" ? "✦ Claude (claude-sonnet-4-6)" : currentEngine === "gemini" ? "◉ Gemini (gemini-2.0-flash)" : "◈ DeepSeek (deepseek-chat)"}
             </span>
             <span>·</span>
             <span className="sensitivity-tag">
@@ -249,6 +249,12 @@ export default function AskClaude({ user }) {
                   onClick={() => setUserPreference(prev => prev === "deepseek" ? null : "deepseek")}
                 >
                   ◈ DeepSeek
+                </button>
+                <button
+                  className={`ai-chip${userPreference === "gemini" ? " active-gemini" : ""}`}
+                  onClick={() => setUserPreference(prev => prev === "gemini" ? null : "gemini")}
+                >
+                  ◉ Gemini
                 </button>
                 {userPreference && (
                   <button className="ai-chip" onClick={() => setUserPreference(null)} style={{ fontSize: 10 }}>

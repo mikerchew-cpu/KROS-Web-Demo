@@ -28,6 +28,7 @@ app.get("/api/health", (req, res) => {
     engines: {
       claude:   process.env.ANTHROPIC_API_KEY ? "configured" : "missing key",
       deepseek: process.env.DEEPSEEK_API_KEY  ? "configured" : "missing key",
+      gemini:   process.env.GEMINI_API_KEY    ? "configured" : "missing key",
     },
     skills_loaded: Object.keys(skills).length,
   });
@@ -62,13 +63,14 @@ app.get("/api/compliance",        (req, res) => res.json({ items: [{id:1,categor
 app.get("/api/dashboard/kpis",    (req, res) => res.json({ currentSkills:17, overdueSkills:3, successionGaps:2, exitCaptureRate:100, pmCompliance:94, openPTWs:7, aiQueriesToday:43, knowledgeScore:82 }));
 app.get("/api/dashboard/activity",(req, res) => res.json({ activity: [{time:"08:42",user:"Amirul Haziq",action:"Asked about crusher breakdown",engine:"deepseek",skill:"maint_breakdown"},{time:"08:15",user:"Farah Izzati",action:"Updated hse_emergency.md",engine:null,skill:"hse_emergency"},{time:"07:30",user:"Tan Mei Ling",action:"Asked about royalty calculation",engine:"claude",skill:"fin_royalty"}] }));
 app.get("/api/exit/sessions",     (req, res) => res.json({ sessions: [{id:1,name:"Rosniza bt Hamid",role:"Finance Clerk",dept:"Finance",date:"2025-04-28",status:"completed",skills:["fin_budget","fin_procurement"],score:92},{id:2,name:"Hafiz bin Said",role:"Maint. Tech",dept:"Maintenance",date:"2025-04-15",status:"completed",skills:["maint_pm","maint_breakdown"],score:87}] }));
-app.get("/api/settings",          (req, res) => res.json({ claudeConfigured: !!process.env.ANTHROPIC_API_KEY, deepseekConfigured: !!process.env.DEEPSEEK_API_KEY, routingMode: process.env.AI_ROUTING_MODE || "auto", version: "2.0.0" }));
+app.get("/api/settings",          (req, res) => res.json({ claudeConfigured: !!process.env.ANTHROPIC_API_KEY, deepseekConfigured: !!process.env.DEEPSEEK_API_KEY, geminiConfigured: !!process.env.GEMINI_API_KEY, version: "2.0.0" }));
 
 app.listen(PORT, () => {
   const skills = loadSkills();
   console.log(`✦ KROS Backend v2.0 on port ${PORT}`);
   console.log(`  Claude:   ${process.env.ANTHROPIC_API_KEY ? "✓" : "✗ missing key"}`);
   console.log(`  DeepSeek: ${process.env.DEEPSEEK_API_KEY  ? "✓" : "✗ missing key"}`);
+  console.log(`  Gemini:   ${process.env.GEMINI_API_KEY    ? "✓" : "✗ missing key"}`);
   console.log(`  Skills:   ${Object.keys(skills).length} loaded`);
 });
 

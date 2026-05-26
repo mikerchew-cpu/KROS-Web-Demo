@@ -58,8 +58,8 @@ export default function Sidebar({ user, activePage, onNavigate, onLogout, theme,
       {/* AI Engine indicator */}
       <div className="ai-engine-indicator">
         <div className="ai-dot" style={{
-          background: engine.color === "purple" ? "var(--purple-light)" : "var(--teal-light)",
-          boxShadow: `0 0 6px ${engine.color === "purple" ? "var(--purple-light)" : "var(--teal-light)"}`,
+          background: engine.color === "purple" ? "var(--purple-light)" : engine.color === "gold" ? "var(--gold-light)" : "var(--teal-light)",
+          boxShadow: `0 0 6px ${engine.color === "purple" ? "var(--purple-light)" : engine.color === "gold" ? "var(--gold-light)" : "var(--teal-light)"}`,
         }} />
         <span className="ai-engine-label">{engine.emoji} {engine.name} · {engine.model}</span>
       </div>

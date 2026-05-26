@@ -9,8 +9,10 @@ const path = require("path");
 
 const CLAUDE_API    = "https://api.anthropic.com/v1/messages";
 const DEEPSEEK_API  = "https://api.deepseek.com/chat/completions";
+const GEMINI_API    = "https://generativelanguage.googleapis.com/v1beta/models";
 const CLAUDE_MODEL  = "claude-sonnet-4-6";
 const DEEPSEEK_MODEL= "deepseek-chat";
+const GEMINI_MODEL  = "gemini-2.0-flash";
 
 // ── Skills loader ──────────────────────────────────────────────
 let skillsCache = null;
@@ -82,7 +84,7 @@ ${skillContent}`;
 
 // ── Standard (non-streaming) call ─────────────────────────────
 async function callAI({ messages, engineOverride }) {
-  const engine   = engineOverride === "deepseek" ? "deepseek" : "claude";
+  const engine   = engineOverride === "deepseek" ? "deepseek" : engineOverride === "gemini" ? "gemini" : "claude";
   const skills   = loadSkills();
   const sysPrompt = buildSystemPrompt(skills);
 
@@ -116,7 +118,7 @@ async function callAI({ messages, engineOverride }) {
     responseText = data.content?.[0]?.text || "";
     tokensUsed   = (data.usage?.input_tokens || 0) + (data.usage?.output_tokens || 0);
 
-  } else {
+  } else if (engine === "deepseek") {
     model = DEEPSEEK_MODEL;
     const res = await fetch(DEEPSEEK_API, {
       method: "POST",
@@ -142,6 +144,29 @@ async function callAI({ messages, engineOverride }) {
     const data   = await res.json();
     responseText = data.choices?.[0]?.message?.content || "";
     tokensUsed   = data.usage?.total_tokens || 0;
+
+  } else {
+    model = GEMINI_MODEL;
+    const res = await fetch(`${GEMINI_API}/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: sysPrompt }] },
+        contents: messages.map((m) => ({
+          role: m.role === "assistant" ? "model" : "user",
+          parts: [{ text: m.content }],
+        })),
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(`Gemini API error ${res.status}: ${err.error?.message || res.statusText}`);
+    }
+
+    const data   = await res.json();
+    responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    tokensUsed   = (data.usageMetadata?.promptTokenCount || 0) + (data.usageMetadata?.candidatesTokenCount || 0);
   }
 
   return { response: responseText, engine, model, tokens_used: tokensUsed };
@@ -149,7 +174,7 @@ async function callAI({ messages, engineOverride }) {
 
 // ── Streaming call (Server-Sent Events) ───────────────────────
 async function streamAI({ messages, engineOverride, res: httpRes }) {
-  const engine    = engineOverride === "deepseek" ? "deepseek" : "claude";
+  const engine    = engineOverride === "deepseek" ? "deepseek" : engineOverride === "gemini" ? "gemini" : "claude";
   const skills    = loadSkills();
   const sysPrompt = buildSystemPrompt(skills);
 
@@ -160,8 +185,8 @@ async function streamAI({ messages, engineOverride, res: httpRes }) {
 
   const send = (data) => httpRes.write(`data: ${JSON.stringify(data)}\n\n`);
 
-  // Send engine info first
-  send({ type: "engine", engine, model: engine === "claude" ? CLAUDE_MODEL : DEEPSEEK_MODEL });
+  const modelMap = { claude: CLAUDE_MODEL, deepseek: DEEPSEEK_MODEL, gemini: GEMINI_MODEL };
+  send({ type: "engine", engine, model: modelMap[engine] });
 
   try {
     if (engine === "claude") {
@@ -206,8 +231,7 @@ async function streamAI({ messages, engineOverride, res: httpRes }) {
       }
       send({ type: "done", tokens_used: totalTokens });
 
-    } else {
-      // DeepSeek streaming
+    } else if (engine === "deepseek") {
       const res = await fetch(DEEPSEEK_API, {
         method: "POST",
         headers: {
@@ -239,6 +263,40 @@ async function streamAI({ messages, engineOverride, res: httpRes }) {
           try {
             const evt = JSON.parse(raw);
             const text = evt.choices?.[0]?.delta?.content || "";
+            if (text) send({ type: "text", text });
+          } catch {}
+        }
+      }
+      send({ type: "done" });
+
+    } else {
+      // Gemini streaming
+      const res = await fetch(`${GEMINI_API}/${GEMINI_MODEL}:streamGenerateContent?alt=sse&key=${process.env.GEMINI_API_KEY}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: sysPrompt }] },
+          contents: messages.map((m) => ({
+            role: m.role === "assistant" ? "model" : "user",
+            parts: [{ text: m.content }],
+          })),
+        }),
+      });
+
+      const reader  = res.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const lines = decoder.decode(value).split("\n");
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          const raw = line.slice(6);
+          if (raw === "[DONE]") continue;
+          try {
+            const evt = JSON.parse(raw);
+            const text = evt.candidates?.[0]?.content?.parts?.[0]?.text || "";
             if (text) send({ type: "text", text });
           } catch {}
         }

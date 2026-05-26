@@ -541,6 +541,7 @@ body {
 .badge-red    { background: rgba(178,34,34,0.2);  color: #FF6B6B;            border: 1px solid rgba(178,34,34,0.4); }
 .badge-purple { background: rgba(107,63,160,0.2); color: var(--purple-light);border: 1px solid rgba(107,63,160,0.4); }
 .badge-teal   { background: rgba(26,122,110,0.2); color: var(--teal-light);  border: 1px solid rgba(26,122,110,0.4); }
+.badge-gold   { background: rgba(200,149,42,0.2); color: var(--gold-light);  border: 1px solid rgba(200,149,42,0.4); }
 .badge-muted  { background: rgba(255,255,255,0.06); color: var(--text-muted);border: 1px solid var(--border); }
 
 /* ── Tags ────────────────────────────────────────────────────── */
@@ -774,6 +775,12 @@ body {
   background: rgba(26,122,110,0.2);
   border-color: rgba(26,122,110,0.5);
   color: var(--teal-light);
+}
+
+.ai-chip.active-gemini {
+  background: rgba(200,149,42,0.2);
+  border-color: rgba(200,149,42,0.5);
+  color: var(--gold-light);
 }
 
 .sensitivity-tag {

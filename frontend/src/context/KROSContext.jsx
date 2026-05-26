@@ -37,8 +37,9 @@ export const SUCCESSION_DATA = [
 ];
 
 export const AI_ENGINES = {
-  claude:   { name: "Claude",   model: "claude-sonnet-4-6",     color: "purple", emoji: "✦", safeFor: ["low","medium","high"] },
-  deepseek: { name: "DeepSeek", model: "deepseek-chat",         color: "teal",   emoji: "◈", safeFor: ["low"] },
+  claude:   { name: "Claude",   model: "claude-sonnet-4-6",     color: "purple", emoji: "✦" },
+  deepseek: { name: "DeepSeek", model: "deepseek-chat",         color: "teal",   emoji: "◈" },
+  gemini:   { name: "Gemini",   model: "gemini-2.0-flash",      color: "gold",   emoji: "◉" },
 };
 
 // Smart router: pick AI based on data sensitivity
