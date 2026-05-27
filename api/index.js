@@ -1,7 +1,7 @@
 const https = require("https");
 
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL || "https://hypgryszzgpzirdduxxd.supabase.co";
-const SUPABASE_KEY = process.env.VITE_SUPABASE_ANON_KEY;
+const SUPABASE_URL = "https://hypgryszzgpzirdduxxd.supabase.co";
+const SUPABASE_KEY = process.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5cGdyeXN6emdwemlyZGR1eHhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3OTkzOTIsImV4cCI6MjA5NTM3NTM5Mn0.fLka2W5LUw12RjaPqFGp8vnWPe8O8MWYtGVs5-b_pXI";
 
 function json(res, code, data) {
   res.writeHead(code, { "Content-Type": "application/json" });
@@ -40,7 +40,7 @@ module.exports = async (req, res) => {
     const path = req.url.split("?")[0];
 
     if (path === "/api/health") {
-      const result = await supabaseFetch("/skills", { params: { select: "count" }, headers: { "Prefer": "count=exact" } });
+      const result = await supabaseFetch("/skills", { params: { select: "count" }, headers: { Prefer: "count=exact" } });
       return json(res, 200, { status: "ok", version: "3.0.0", skills_loaded: (result.data || []).length, timestamp: new Date().toISOString() });
     }
 
