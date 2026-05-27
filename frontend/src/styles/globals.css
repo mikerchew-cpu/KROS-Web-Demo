@@ -1607,6 +1607,19 @@ tr:hover td { background: rgba(255,255,255,0.02); color: var(--text-primary); }
 .trend-down { color: var(--red); }
 .empty-state { font-size: 13px; color: var(--text-muted); text-align: center; padding: 24px; }
 
+/* ── Modal ────────────────────────────────────────────────────── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+.modal { background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 0; width: 90%; max-width: 480px; box-shadow: var(--shadow-lg); }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 0; }
+.modal-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--text-primary); }
+.modal-body { padding: 16px 20px; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 20px 18px; border-top: 1px solid var(--border); }
+.modal-hint { font-size: 10px; color: var(--text-muted); margin-top: 6px; font-family: var(--font-mono); }
+
+/* ── Mine select row ──────────────────────────────────────────── */
+.prod-mine-select-row { display: flex; gap: 6px; align-items: center; }
+.prod-mine-select-row .form-select { flex: 1; }
+
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
