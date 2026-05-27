@@ -1,8 +1,8 @@
 import { useKROS, SKILLS_DATA, SUCCESSION_DATA } from "../context/KROSContext";
 
 const KPIS = [
-  { label: "Skills On Time",    value: "17",  sub: "of 20 skills current",      change: "+2 this month",  type: "positive", accent: "var(--teal)",   icon: "◫" },
-  { label: "Overdue Reviews",   value: "3",   sub: "require immediate update",  change: "1 critical",     type: "negative", accent: "var(--red)",    icon: "⚠" },
+  { label: "Skills On Time",    value: "31",  sub: "of 35 skills current",      change: "+14 this month", type: "positive", accent: "var(--teal)",   icon: "◫" },
+  { label: "Overdue Reviews",   value: "4",   sub: "require immediate update",  change: "1 critical",     type: "negative", accent: "var(--red)",    icon: "⚠" },
   { label: "Succession Gaps",   value: "2",   sub: "critical roles uncovered",  change: "Ops & Metallurgy",type:"negative", accent: "var(--gold)",   icon: "⟳" },
   { label: "Exit Captures",     value: "100%",sub: "completed on time",         change: "3 this quarter", type: "positive", accent: "var(--green)",  icon: "◳" },
   { label: "PM Compliance",     value: "94%", sub: "target ≥ 95%",             change: "↓ 1% this month", type: "neutral",  accent: "var(--purple)", icon: "⬡" },
@@ -23,6 +23,7 @@ const RECENT_ACTIVITY = [
 const TAG_MAP = {
   ops: "tag-ops", hse: "tag-hse", hrm: "tag-hrm",
   fin: "tag-fin", proj: "tag-proj", maint: "tag-maint", env: "tag-env",
+  ai: "tag-ai", qa: "tag-qa", log: "tag-log", eng: "tag-eng", com: "tag-com",
 };
 
 export default function Dashboard({ user, onNavigate }) {
@@ -96,7 +97,7 @@ export default function Dashboard({ user, onNavigate }) {
           <div className="card-header">
             <div>
               <div className="card-title">Skills Needing Attention</div>
-              <div className="card-subtitle">{overdueSkills.length} of 20 skills require update</div>
+              <div className="card-subtitle">{overdueSkills.length} of 35 skills require update</div>
             </div>
             <button className="btn btn-ghost btn-sm" onClick={() => onNavigate("skills")}>View all</button>
           </div>
@@ -125,8 +126,8 @@ export default function Dashboard({ user, onNavigate }) {
               <div className="progress-fill" style={{ width: "85%", background: "linear-gradient(90deg, var(--teal), var(--gold))" }} />
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
-              <span style={{ fontSize: 10, color: "var(--text-muted)" }}>17 current</span>
-              <span style={{ fontSize: 10, color: "var(--text-muted)" }}>85%</span>
+            <span style={{ fontSize: 10, color: "var(--text-muted)" }}>31 current</span>
+            <span style={{ fontSize: 10, color: "var(--text-muted)" }}>89%</span>
             </div>
           </div>
         </div>

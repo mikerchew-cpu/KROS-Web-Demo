@@ -3,13 +3,18 @@ import { useKROS } from "../context/KROSContext";
 import { skillsAPI } from "../utils/api";
 
 const MODULE_COLORS = {
-  ops:   { accent: "var(--teal)",          tag: "tag-ops",  label: "Operations"    },
-  hse:   { accent: "var(--red)",           tag: "tag-hse",  label: "Safety / HSE"  },
-  env:   { accent: "var(--green-light)",   tag: "tag-env",  label: "Environment"   },
-  hrm:   { accent: "#6BAED6",              tag: "tag-hrm",  label: "HRM"           },
-  fin:   { accent: "var(--gold)",          tag: "tag-fin",  label: "Finance"       },
-  proj:  { accent: "var(--purple-light)",  tag: "tag-proj", label: "Projects"      },
-  maint: { accent: "var(--green-light)",  tag: "tag-maint",label: "Maintenance"   },
+  ops:   { accent: "var(--teal)",          tag: "tag-ops",  label: "Operations"      },
+  hse:   { accent: "var(--red)",           tag: "tag-hse",  label: "Safety / HSE"    },
+  env:   { accent: "var(--teal-light)",    tag: "tag-env",  label: "Environment"     },
+  hrm:   { accent: "#6BAED6",              tag: "tag-hrm",  label: "HRM"             },
+  fin:   { accent: "var(--gold)",          tag: "tag-fin",  label: "Finance"         },
+  proj:  { accent: "var(--purple-light)",  tag: "tag-proj", label: "Projects"        },
+  maint: { accent: "var(--green-light)",   tag: "tag-maint",label: "Maintenance"     },
+  ai:    { accent: "var(--purple)",        tag: "tag-ai",   label: "AI Analysis"     },
+  qa:    { accent: "var(--green)",         tag: "tag-qa",   label: "Quality"         },
+  log:   { accent: "var(--gold)",          tag: "tag-log",  label: "Logistics"       },
+  eng:   { accent: "var(--gold-light)",    tag: "tag-eng",  label: "Energy"          },
+  com:   { accent: "var(--navy-mid)",      tag: "tag-com",  label: "Community"       },
 };
 
 const STATUS_INFO = {

@@ -556,6 +556,11 @@ body {
 .tag-proj   { background: rgba(91,58,140,0.18);  color: var(--purple-light); }
 .tag-maint  { background: rgba(45,125,74,0.18);  color: var(--green-light); }
 .tag-env    { background: rgba(45,125,74,0.18);  color: var(--green-light); }
+.tag-ai     { background: rgba(91,58,140,0.25);  color: var(--purple-light); }
+.tag-qa     { background: rgba(45,125,74,0.18);  color: var(--green-light); }
+.tag-log    { background: rgba(189,144,66,0.18); color: var(--gold-light); }
+.tag-eng    { background: rgba(0,130,243,0.18);  color: var(--gold-light); }
+.tag-com    { background: rgba(6,6,64,0.2);      color: var(--navy-light); }
 
 /* ── Search ──────────────────────────────────────────────────── */
 .search-bar {
