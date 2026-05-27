@@ -1,9 +1,8 @@
-// vite.config.js
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
 export default defineConfig({
-  base: "/KROS-Web-Demo/",
+  base: process.env.VERCEL ? "/" : "/KROS-Web-Demo/",
   plugins: [react()],
   server: {
     port: 5173,
