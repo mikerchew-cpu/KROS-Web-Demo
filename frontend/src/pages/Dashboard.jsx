@@ -1,14 +1,15 @@
+import { useState } from "react";
 import { useKROS, SKILLS_DATA, SUCCESSION_DATA } from "../context/KROSContext";
 
-const KPIS = [
-  { label: "Skills On Time",    value: "31",  sub: "of 35 skills current",      change: "+14 this month", type: "positive", accent: "var(--teal)",   icon: "◫" },
-  { label: "Overdue Reviews",   value: "4",   sub: "require immediate update",  change: "1 critical",     type: "negative", accent: "var(--red)",    icon: "⚠" },
-  { label: "Succession Gaps",   value: "2",   sub: "critical roles uncovered",  change: "Ops & Metallurgy",type:"negative", accent: "var(--gold)",   icon: "⟳" },
-  { label: "Exit Captures",     value: "100%",sub: "completed on time",         change: "3 this quarter", type: "positive", accent: "var(--green)",  icon: "◳" },
-  { label: "PM Compliance",     value: "94%", sub: "target ≥ 95%",             change: "↓ 1% this month", type: "neutral",  accent: "var(--purple)", icon: "⬡" },
-  { label: "Open PTWs",         value: "7",   sub: "active permits today",      change: "2 expire today", type: "neutral",  accent: "var(--teal-light)", icon: "⚖" },
-  { label: "AI Queries Today",  value: "43",  sub: "staff interactions",        change: "↑ 12 vs yesterday",type:"positive",accent: "var(--purple-light)", icon: "✦" },
-  { label: "Knowledge Score",   value: "82",  sub: "out of 100",               change: "↑ 4 this quarter",type:"positive", accent: "var(--gold-light)",  icon: "◎" },
+const KPI_DEFS = [
+  { label: "Skills On Time",    key: "skillsFresh", icon: "◫", type: "positive" },
+  { label: "Overdue Reviews",   key: "overdue",     icon: "⚠", type: "negative" },
+  { label: "Succession Gaps",   key: "gaps",        icon: "⟳", type: "negative" },
+  { label: "Exit Captures",     key: "exits",       icon: "◳", type: "positive" },
+  { label: "PM Compliance",     key: "pm",          icon: "⬡", type: "neutral" },
+  { label: "Open PTWs",         key: "ptw",         icon: "⚖", type: "neutral" },
+  { label: "AI Queries Today",  key: "aiQueries",   icon: "✦", type: "positive" },
+  { label: "Knowledge Score",   key: "score",       icon: "◎", type: "positive" },
 ];
 
 const RECENT_ACTIVITY = [
@@ -16,6 +17,8 @@ const RECENT_ACTIVITY = [
   { time: "08:15", user: "Farah Izzati",    action: "Updated hse_emergency.md — slope failure protocol revised",  engine: null,       skill: "hse_emergency" },
   { time: "07:50", user: "Raj Namasivayam", action: "Completed shift handover via ops_shift_handover.md",          engine: null,       skill: "ops_shift_handover" },
   { time: "07:30", user: "Tan Mei Ling",    action: "Asked Claude about royalty calculation for Q1",               engine: "claude",   skill: "fin_royalty" },
+  { time: "07:15", user: "AI System",       action: "Maint analysis — crusher bearing temp trending high",         engine: "ai_analysis", skill: "maint_ai_analysis" },
+  { time: "06:50", user: "Mine Manager",    action: "Reviewed weekly production analysis report",                 engine: "ai_analysis", skill: "ops_ai_analysis" },
   { time: "Yesterday", user: "HR Manager",  action: "Exit capture session completed — Kerani Kewangan departing",  engine: "claude",   skill: "hrm_exit" },
   { time: "Yesterday", user: "AI System",   action: "Flagged: hrm_succession.md overdue review — 5 months",        engine: null,       skill: "hrm_succession" },
 ];
@@ -26,45 +29,72 @@ const TAG_MAP = {
   ai: "tag-ai", qa: "tag-qa", log: "tag-log", eng: "tag-eng", com: "tag-com",
 };
 
+function computeMetrics(skillsData, successionData) {
+  const fresh = skillsData.filter(s => s.status === "fresh").length;
+  const stale = skillsData.filter(s => s.status === "stale").length;
+  const urgent = skillsData.filter(s => s.status === "urgent").length;
+  return {
+    skillsFresh: fresh,
+    overdue: stale + urgent,
+    gaps: successionData.filter(s => s.risk === "critical").length,
+    exits: 100,
+    pm: 94,
+    ptw: 7,
+    aiQueries: 43,
+    score: Math.round((fresh / skillsData.length) * 80 + 15),
+    totalSkills: skillsData.length,
+    stale, urgent, fresh,
+  };
+}
+
 export default function Dashboard({ user, onNavigate }) {
   const { notifications, clearNotification } = useKROS();
+  const [showDetail, setShowDetail] = useState(null);
+  const metrics = computeMetrics(SKILLS_DATA, SUCCESSION_DATA);
   const overdueSkills = SKILLS_DATA.filter(s => s.status !== "fresh");
-  const criticalGaps  = SUCCESSION_DATA.filter(s => s.risk === "critical");
+  const criticalGaps = SUCCESSION_DATA.filter(s => s.risk === "critical");
+
+  const getKpiValue = (key) => {
+    const map = {
+      skillsFresh: { v: String(metrics.skillsFresh), sub: `of ${metrics.totalSkills} skills current`, ch: `+${metrics.skillsFresh - 17} this month` },
+      overdue:     { v: String(metrics.overdue),     sub: "require immediate update",              ch: `${metrics.urgent} critical` },
+      gaps:        { v: String(metrics.gaps),        sub: "critical roles uncovered",              ch: "Ops & Metallurgy" },
+      exits:       { v: `${metrics.exits}%`,         sub: "completed on time",                     ch: "3 this quarter" },
+      pm:          { v: `${metrics.pm}%`,            sub: "target ≥ 95%",                          ch: "↓ 1% this month" },
+      ptw:         { v: String(metrics.ptw),          sub: "active permits today",                  ch: "2 expire today" },
+      aiQueries:   { v: String(metrics.aiQueries),   sub: "staff interactions",                    ch: "↑ 12 vs yesterday" },
+      score:       { v: String(metrics.score),        sub: "out of 100",                           ch: "↑ 4 this quarter" },
+    };
+    return map[key] || { v: "—", sub: "", ch: "" };
+  };
 
   return (
     <div className="page">
-      {/* Header */}
       <div className="page-header">
         <div>
-          <div className="page-title">Good morning, {user.givenName} 👋</div>
+          <div className="page-title">Good morning, {user.givenName}</div>
           <div className="page-subtitle">{user.role} · {new Date().toLocaleDateString("en-MY", { weekday:"long", day:"numeric", month:"long", year:"numeric" })}</div>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
-          <button className="btn btn-ghost btn-sm" onClick={() => onNavigate("ask")}>✦ Ask AI</button>
+          <button className="btn btn-ghost btn-sm" onClick={() => onNavigate("workflow")}>⚙ Workflows</button>
+          <button className="btn btn-ghost btn-sm" onClick={() => onNavigate("mine-analysis")}>⛏ Analysis</button>
           <button className="btn btn-primary btn-sm" onClick={() => onNavigate("skills")}>View All Skills</button>
         </div>
       </div>
 
-      {/* Alerts */}
       {notifications.length > 0 && (
-        <div style={{ marginBottom: 24 }}>
+        <div className="page-alerts">
           {notifications.map(n => (
             <div key={n.id} className={`alert alert-${n.type === "urgent" ? "error" : n.type === "warn" ? "warn" : "info"}`}>
               <span>{n.type === "urgent" ? "⚠" : n.type === "warn" ? "◉" : "◈"}</span>
               <span style={{ flex: 1 }}>{n.message}</span>
               {n.skill && (
-                <span
-                  className="skill-ref"
-                  onClick={() => onNavigate("skills")}
-                  style={{ cursor: "pointer" }}
-                >
+                <span className="skill-ref" onClick={() => onNavigate("skills")} style={{ cursor: "pointer" }}>
                   {n.skill}.md
                 </span>
               )}
-              <button
-                onClick={() => clearNotification(n.id)}
-                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", fontSize: 14, padding: "0 4px" }}
-              >
+              <button onClick={() => clearNotification(n.id)}
+                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", fontSize: 14, padding: "0 4px" }}>
                 ×
               </button>
             </div>
@@ -72,67 +102,74 @@ export default function Dashboard({ user, onNavigate }) {
         </div>
       )}
 
-      {/* KPI Grid */}
-      <div className="grid-4" style={{ marginBottom: 24 }}>
-        {KPIS.map((kpi, i) => (
-          <div className="stat-card" key={i} style={{ "--accent-color": kpi.accent }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-              <div style={{ fontSize: 20, opacity: 0.7 }}>{kpi.icon}</div>
+      <div className="kpi-grid">
+        {KPI_DEFS.map(kpi => {
+          const d = getKpiValue(kpi.key);
+          return (
+            <div key={kpi.key} className="kpi-card" onClick={() => setShowDetail(showDetail === kpi.key ? null : kpi.key)}>
+              <div className="kpi-card-header">
+                <span className="kpi-icon">{kpi.icon}</span>
+                <span className={`kpi-trend ${kpi.type}`}>{d.ch.split(" ")[0]}</span>
+              </div>
+              <div className="kpi-value">{d.v}</div>
+              <div className="kpi-label">{kpi.label}</div>
+              <div className="kpi-sub">{d.sub}</div>
+              {showDetail === kpi.key && (
+                <div className="kpi-detail">
+                  <div className="progress-bar" style={{ marginTop: 8 }}>
+                    <div className="progress-fill" style={{
+                      width: kpi.key === "score" ? `${metrics.score}%` :
+                             kpi.key === "skillsFresh" ? `${(metrics.skillsFresh / metrics.totalSkills) * 100}%` :
+                             kpi.key === "pm" ? "94%" : "70%",
+                      background: kpi.type === "positive" ? "var(--green)" : kpi.type === "negative" ? "var(--red)" : "var(--gold)"
+                    }} />
+                  </div>
+                  <div className="kpi-detail-text">
+                    {kpi.key === "skillsFresh" && `${metrics.skillsFresh} current, ${metrics.stale} stale, ${metrics.urgent} urgent`}
+                    {kpi.key === "overdue" && `${metrics.urgent} urgent · ${metrics.stale} stale · Review now`}
+                    {kpi.key === "score" && `${metrics.score}/100 · ${metrics.skillsFresh} skills on time · ${metrics.overdue} overdue`}
+                    {kpi.key === "gaps" && `${criticalGaps.map(g => g.role).join(", ")}`}
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="stat-value">{kpi.value}</div>
-            <div className="stat-label">{kpi.label}</div>
-            <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>{kpi.sub}</div>
-            <div className={`stat-change ${kpi.type}`}>
-              {kpi.type === "positive" ? "▲" : kpi.type === "negative" ? "▼" : "—"} {kpi.change}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* Two columns: Skills status + Succession */}
-      <div className="grid-2" style={{ marginBottom: 24 }}>
-
-        {/* Skills needing attention */}
+      <div className="dashboard-panels">
         <div className="card">
           <div className="card-header">
             <div>
               <div className="card-title">Skills Needing Attention</div>
-              <div className="card-subtitle">{overdueSkills.length} of 35 skills require update</div>
+              <div className="card-subtitle">{overdueSkills.length} of {metrics.totalSkills} skills require update</div>
             </div>
             <button className="btn btn-ghost btn-sm" onClick={() => onNavigate("skills")}>View all</button>
           </div>
-
-          {overdueSkills.map(s => (
-            <div key={s.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid var(--border)" }}>
-              <div className={`skill-status-dot ${s.status}`} style={{ width: 8, height: 8, borderRadius: "50%", flexShrink: 0 }} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text-primary)", marginBottom: 1 }}>{s.title}</div>
-                <div style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>
-                  {s.id}.md · Owner: {s.owner}
+          <div className="card-body">
+            {overdueSkills.slice(0, 4).map(s => (
+              <div key={s.id} className="list-row">
+                <div className={`skill-status-dot ${s.status}`} />
+                <div className="list-row-content">
+                  <div className="list-row-title">{s.title}</div>
+                  <div className="list-row-meta">{s.id}.md · Owner: {s.owner}</div>
                 </div>
+                <span className={`badge badge-${s.status === "urgent" ? "red" : "gold"}`}>{s.status}</span>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
-                <span className={`badge badge-${s.status === "urgent" ? "red" : "gold"}`}>
-                  {s.status}
-                </span>
-                <span style={{ fontSize: 10, color: "var(--text-muted)" }}>{s.lastUpdated}</span>
-              </div>
-            </div>
-          ))}
-
-          <div style={{ paddingTop: 12 }}>
-            <div style={{ marginBottom: 6, fontSize: 11, color: "var(--text-muted)" }}>Overall Skills Health</div>
+            ))}
+          </div>
+          <div className="card-footer">
+            <div className="progress-label">Overall Skills Health</div>
             <div className="progress-bar">
-              <div className="progress-fill" style={{ width: "85%", background: "linear-gradient(90deg, var(--teal), var(--gold))" }} />
+              <div className="progress-fill" style={{ width: `${(metrics.skillsFresh / metrics.totalSkills) * 100}%`, background: "linear-gradient(90deg, var(--teal), var(--gold))" }} />
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
-            <span style={{ fontSize: 10, color: "var(--text-muted)" }}>31 current</span>
-            <span style={{ fontSize: 10, color: "var(--text-muted)" }}>89%</span>
+            <div className="progress-stats">
+              <span>{metrics.skillsFresh} current</span>
+              <span>{Math.round((metrics.skillsFresh / metrics.totalSkills) * 100)}%</span>
             </div>
           </div>
         </div>
 
-        {/* Succession gaps */}
         <div className="card">
           <div className="card-header">
             <div>
@@ -141,28 +178,28 @@ export default function Dashboard({ user, onNavigate }) {
             </div>
             <button className="btn btn-ghost btn-sm" onClick={() => onNavigate("succession")}>Full matrix</button>
           </div>
-
-          {SUCCESSION_DATA.slice(0, 6).map((row, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 0", borderBottom: "1px solid var(--border)" }}>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text-primary)", marginBottom: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{row.role}</div>
-                <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>{row.current}</div>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 11, color: row.readyNow === "—" ? "var(--red)" : "var(--green-light)", marginBottom: 2 }}>
-                  {row.readyNow === "—" ? "No deputy" : row.readyNow}
+          <div className="card-body">
+            {SUCCESSION_DATA.slice(0, 5).map((row, i) => (
+              <div key={i} className="list-row">
+                <div className="list-row-content">
+                  <div className="list-row-title">{row.role}</div>
+                  <div className="list-row-meta">{row.current}</div>
                 </div>
-                <span className={`risk-pill risk-${row.risk}`}>
-                  {row.risk === "critical" ? "🔴" : row.risk === "at-risk" ? "🟡" : "🟢"} {row.risk}
-                </span>
+                <div className="list-row-end">
+                  <div className="list-row-sub" style={{ color: row.readyNow === "—" ? "var(--red)" : "var(--green-light)" }}>
+                    {row.readyNow === "—" ? "No deputy" : row.readyNow}
+                  </div>
+                  <span className={`risk-pill risk-${row.risk}`}>
+                    {row.risk === "critical" ? "🔴" : row.risk === "at-risk" ? "🟡" : "🟢"} {row.risk}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Recent Activity */}
-      <div className="card">
+      <div className="card" style={{ marginTop: 20 }}>
         <div className="card-header">
           <div>
             <div className="card-title">Recent Activity</div>
@@ -183,22 +220,22 @@ export default function Dashboard({ user, onNavigate }) {
             <tbody>
               {RECENT_ACTIVITY.map((row, i) => (
                 <tr key={i}>
-                  <td style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)", whiteSpace: "nowrap" }}>{row.time}</td>
-                  <td style={{ fontWeight: 600, color: "var(--text-primary)", fontSize: 12 }}>{row.user}</td>
-                  <td style={{ fontSize: 12 }}>{row.action}</td>
+                  <td className="cell-mono">{row.time}</td>
+                  <td className="cell-bold">{row.user}</td>
+                  <td>{row.action}</td>
                   <td>
-                    {row.engine ? (
+                    {row.engine === "ai_analysis" ? (
+                      <span className="badge badge-purple">◈ AI Analysis</span>
+                    ) : row.engine ? (
                       <span className={`badge badge-${row.engine === "claude" ? "purple" : "teal"}`}>
                         {row.engine === "claude" ? "✦ Claude" : "◈ DeepSeek"}
                       </span>
                     ) : (
-                      <span style={{ color: "var(--text-muted)", fontSize: 11 }}>—</span>
+                      <span className="cell-muted">—</span>
                     )}
                   </td>
                   <td>
-                    {row.skill && (
-                      <span className="skill-ref" style={{ fontSize: 10 }}>{row.skill}.md</span>
-                    )}
+                    {row.skill && <span className="skill-ref" style={{ fontSize: 10 }}>{row.skill}.md</span>}
                   </td>
                 </tr>
               ))}

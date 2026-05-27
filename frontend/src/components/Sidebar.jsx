@@ -2,12 +2,16 @@ import { useKROS } from "../context/KROSContext";
 
 const NAV_ITEMS = [
   { id: "dashboard",  icon: "⬡", label: "Dashboard" },
-  { id: "ask",        icon: "✦", label: "Ask AI",       section: "AI" },
+  { id: "ask",        icon: "✦", label: "Ask AI",         section: "AI" },
   { id: "skills",     icon: "◫", label: "Skills Library" },
+  { id: "workflow",   icon: "⚙", label: "Workflow" },
+  { id: "mine-analysis",icon:"⛏",label: "Mine Analysis" },
+  { id: "production", icon: "📊",label: "Production" },
   { id: "succession", icon: "⟳", label: "Succession" },
   { id: "exit",       icon: "◳", label: "Exit Capture" },
   { id: "compliance", icon: "⚖", label: "Compliance" },
-  { id: "settings",   icon: "◎", label: "Settings",     section: "SYSTEM" },
+  { id: "manual",     icon: "◈", label: "User Manual" },
+  { id: "settings",   icon: "◎", label: "Settings",       section: "SYSTEM" },
 ];
 
 const ADMIN_ITEM = { id: "admin", icon: "◈", label: "Admin", section: "SYSTEM" };
@@ -28,7 +32,6 @@ export default function Sidebar({ user, activePage, onNavigate, onLogout, theme,
 
   return (
     <nav className="sidebar">
-      {/* Logo */}
       <div className="sidebar-logo">
         <div className="logo-mark">
           <div className="logo-icon">KR</div>
@@ -37,20 +40,14 @@ export default function Sidebar({ user, activePage, onNavigate, onLogout, theme,
         <div className="logo-sub">Knowledge Engine</div>
       </div>
 
-      {/* Nav */}
       <div className="sidebar-nav">
         {visibleNav.map(item => {
           const showSection = item.section && item.section !== lastSection;
           if (showSection) lastSection = item.section;
           return (
             <div key={item.id}>
-              {showSection && (
-                <div className="nav-section-label">{item.section}</div>
-              )}
-              <div
-                className={`nav-item${activePage === item.id ? " active" : ""}`}
-                onClick={() => onNavigate(item.id)}
-              >
+              {showSection && <div className="nav-section-label">{item.section}</div>}
+              <div className={`nav-item${activePage === item.id ? " active" : ""}`} onClick={() => onNavigate(item.id)}>
                 <span className="nav-icon">{item.icon}</span>
                 <span>{item.label}</span>
                 {item.id === "dashboard" && urgentCount > 0 && (
@@ -62,7 +59,6 @@ export default function Sidebar({ user, activePage, onNavigate, onLogout, theme,
         })}
       </div>
 
-      {/* AI Engine indicator */}
       <div className="ai-engine-indicator">
         <div className="ai-dot" style={{
           background: engine.color === "purple" ? "var(--purple-light)" : engine.color === "gold" ? "var(--gold-light)" : "var(--teal-light)",
@@ -71,19 +67,14 @@ export default function Sidebar({ user, activePage, onNavigate, onLogout, theme,
         <span className="ai-engine-label">{engine.emoji} {engine.name} · {engine.model}</span>
       </div>
 
-      {/* Theme toggle */}
       <div style={{ padding: "0 18px 8px", display: "flex", justifyContent: "center" }}>
-        <button
-          onClick={onToggleTheme}
-          className="btn btn-ghost btn-sm"
+        <button onClick={onToggleTheme} className="btn btn-ghost btn-sm"
           style={{ width: "100%", justifyContent: "center", fontSize: 13, gap: 6 }}
-          title={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-        >
+          title={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}>
           {theme === "dark" ? "☀️ Light" : "🌙 Dark"}
         </button>
       </div>
 
-      {/* User card */}
       <div className="sidebar-footer">
         <div className="user-card" onClick={onLogout} title="Click to sign out">
           <div className="user-avatar">{initials}</div>

@@ -10,6 +10,10 @@ import Compliance, { Settings } from "./pages/Compliance";
 import LoginPage from "./pages/LoginPage";
 import LandingPage from "./pages/LandingPage";
 import AdminPage from "./pages/AdminPage";
+import Workflow from "./pages/Workflow";
+import MineAnalysis from "./pages/MineAnalysis";
+import ProductionAnalysis from "./pages/ProductionAnalysis";
+import UserManual from "./pages/UserManual";
 import "./styles/globals.css";
 
 export default function App() {
@@ -25,27 +29,57 @@ export default function App() {
 
   const toggleTheme = () => setTheme(prev => prev === "dark" ? "light" : "dark");
 
-  useEffect(() => {
+  const restoreSession = () => {
     const stored = localStorage.getItem("kros_user");
     const token = localStorage.getItem("kros_token");
-    if (stored && token) setUser(JSON.parse(stored));
-  }, []);
+    if (stored && token) {
+      try {
+        const parsed = JSON.parse(stored);
+        const tokenData = JSON.parse(atob(token));
+        if (tokenData.exp && tokenData.exp > Date.now()) {
+          setUser(parsed);
+          return true;
+        }
+      } catch {}
+      localStorage.removeItem("kros_user");
+      localStorage.removeItem("kros_token");
+    }
+    return false;
+  };
 
-  const handleLogin = (u) => { localStorage.setItem("kros_user", JSON.stringify(u)); setUser(u); };
-  const handleLogout = () => { localStorage.removeItem("kros_user"); localStorage.removeItem("kros_token"); setUser(null); };
+  useEffect(() => { restoreSession(); }, []);
+
+  const handleLogin = (u) => {
+    localStorage.setItem("kros_user", JSON.stringify(u));
+    setUser(u);
+    setActivePage("dashboard");
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("kros_user");
+    localStorage.removeItem("kros_token");
+    setShowLogin(false);
+    setUser(null);
+  };
+
+  window.__KROS_NAV = setActivePage;
 
   if (!user && !showLogin) return <LandingPage onGetStarted={() => setShowLogin(true)} theme={theme} onToggleTheme={toggleTheme} />;
   if (!user) return <LoginPage onLogin={handleLogin} />;
 
   const pages = {
-    dashboard:  <Dashboard   user={user} onNavigate={setActivePage} />,
-    skills:     <SkillsLibrary onNavigate={setActivePage} />,
-    ask:        <AskClaude   user={user} />,
-    succession: <SuccessionMap />,
-    exit:       <ExitCapture />,
-    compliance: <Compliance />,
-    admin:      <AdminPage   user={user} />,
-    settings:   <Settings    user={user} onLogout={handleLogout} />,
+    dashboard:          <Dashboard   user={user} onNavigate={setActivePage} />,
+    skills:             <SkillsLibrary onNavigate={setActivePage} />,
+    ask:                <AskClaude   user={user} />,
+    succession:         <SuccessionMap />,
+    exit:               <ExitCapture />,
+    compliance:         <Compliance />,
+    admin:              <AdminPage   user={user} />,
+    settings:           <Settings    user={user} onLogout={handleLogout} />,
+    workflow:           <Workflow />,
+    "mine-analysis":    <MineAnalysis />,
+    "production":       <ProductionAnalysis />,
+    manual:             <UserManual />,
   };
 
   return (
