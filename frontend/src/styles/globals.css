@@ -1569,6 +1569,44 @@ tr:hover td { background: rgba(255,255,255,0.02); color: var(--text-primary); }
 .ai-templates-toggle { font-size: 12px; color: var(--purple-light); cursor: pointer; margin-bottom: 8px; padding: 6px 10px; border-radius: 8px; background: rgba(91,58,140,0.08); display: inline-flex; align-items: center; gap: 6px; user-select: none; }
 .ai-templates-toggle:hover { background: rgba(91,58,140,0.15); }
 
+/* ── Production Analysis Controls ─────────────────────────────── */
+.prod-controls { background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 20px; margin-bottom: 20px; }
+.prod-controls-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.prod-controls-row + .prod-controls-row { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.prod-select-group { flex: 1; min-width: 180px; }
+.prod-label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-family: var(--font-mono); display: block; margin-bottom: 4px; }
+.prod-location-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+.prod-chip { font-size: 11px; padding: 4px 10px; border-radius: 16px; background: var(--surface-2); color: var(--text-secondary); cursor: pointer; border: 1px solid var(--border); transition: all var(--transition); font-family: var(--font-mono); }
+.prod-chip:hover { border-color: var(--border-act); }
+.prod-chip.active { background: rgba(56,152,236,0.12); border-color: var(--gold); color: var(--gold); }
+.prod-chip-reset { font-size: 11px; padding: 4px 8px; cursor: pointer; color: var(--text-muted); font-family: var(--font-mono); }
+.prod-toggle { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); cursor: pointer; }
+.prod-toggle input { accent-color: var(--gold); }
+
+/* ── Production Summary Cards ─────────────────────────────────── */
+.prod-summary-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.prod-summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.prod-summary-item { background: var(--surface-2); border-radius: 10px; padding: 14px; }
+.prod-summary-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; font-family: var(--font-mono); font-weight: 600; display: block; margin-bottom: 4px; }
+.prod-summary-value { font-size: 20px; font-weight: 800; color: var(--text-primary); font-family: var(--font-display); display: block; }
+.prod-summary-sub { font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); }
+.prod-summary-change { font-size: 11px; font-family: var(--font-mono); font-weight: 600; }
+.prod-summary-change[data-good="true"] { color: var(--green-light); }
+.prod-summary-change[data-good="false"] { color: var(--red); }
+
+/* ── Monthly Comparison Table ─────────────────────────────────── */
+.monthly-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.monthly-table th { padding: 10px 14px; font-size: 10px; font-family: var(--font-mono); color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid var(--border); font-weight: 600; text-align: center; }
+.monthly-table th:first-child { text-align: left; }
+.monthly-table td { padding: 10px 14px; font-size: 12px; color: var(--text-secondary); border-bottom: 1px solid rgba(255,255,255,0.04); text-align: center; }
+.monthly-table td:first-child { text-align: left; }
+.monthly-table td.cell-highlight { font-weight: 700; color: var(--text-primary); }
+.monthly-table tr:hover td { background: rgba(255,255,255,0.02); }
+.trend-arrow { font-size: 14px; }
+.trend-up { color: var(--green-light); }
+.trend-down { color: var(--red); }
+.empty-state { font-size: 13px; color: var(--text-muted); text-align: center; padding: 24px; }
+
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
