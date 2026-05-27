@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { KROSProvider } from "./context/KROSContext";
 import Sidebar from "./components/Sidebar";
+import GlobalSearch from "./components/GlobalSearch";
+import QuickActions from "./components/QuickActions";
+import NotificationCenter from "./components/NotificationCenter";
 import Dashboard from "./pages/Dashboard";
 import SkillsLibrary from "./pages/SkillsLibrary";
 import AskClaude from "./pages/AskClaude";
@@ -24,6 +27,8 @@ import BlastDashboard from "./pages/BlastDashboard";
 import EnvironmentalMonitor from "./pages/EnvironmentalMonitor";
 import PredictiveMaintenance from "./pages/PredictiveMaintenance";
 import ExecutiveReport from "./pages/ExecutiveReport";
+import TrainingMatrix from "./pages/TrainingMatrix";
+import WeatherDashboard from "./pages/WeatherDashboard";
 import "./styles/globals.css";
 
 export default function App() {
@@ -31,6 +36,7 @@ export default function App() {
   const [activePage, setActivePage] = useState("dashboard");
   const [theme, setTheme] = useState(() => localStorage.getItem("kros_theme") || "dark");
   const [showLogin, setShowLogin] = useState(false);
+  const [showNotif, setShowNotif] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -38,6 +44,7 @@ export default function App() {
   }, [theme]);
 
   const toggleTheme = () => setTheme(prev => prev === "dark" ? "light" : "dark");
+  window.__KROS_NAV = setActivePage;
 
   useEffect(() => {
     const stored = localStorage.getItem("kros_user");
@@ -53,7 +60,6 @@ export default function App() {
 
   const handleLogin = (u) => { localStorage.setItem("kros_user", JSON.stringify(u)); setUser(u); setActivePage("dashboard"); };
   const handleLogout = () => { localStorage.removeItem("kros_user"); localStorage.removeItem("kros_token"); setShowLogin(false); setUser(null); };
-  window.__KROS_NAV = setActivePage;
 
   if (!user && !showLogin) return <LandingPage onGetStarted={() => setShowLogin(true)} theme={theme} onToggleTheme={toggleTheme} />;
   if (!user) return <LoginPage onLogin={handleLogin} />;
@@ -81,16 +87,30 @@ export default function App() {
     "environmental": <EnvironmentalMonitor />,
     "predictive-mt": <PredictiveMaintenance />,
     "exec-report":   <ExecutiveReport />,
+    "training":      <TrainingMatrix />,
+    "weather":       <WeatherDashboard />,
   };
 
   return (
     <KROSProvider>
       <div className="app-shell">
-        <Sidebar user={user} activePage={activePage} onNavigate={setActivePage} onLogout={handleLogout} theme={theme} onToggleTheme={toggleTheme} />
-        <main className="main-content">
-          {pages[activePage] || <Dashboard user={user} onNavigate={setActivePage} />}
-        </main>
+        <Sidebar user={user} activePage={activePage} onNavigate={setActivePage} onLogout={handleLogout} theme={theme} onToggleTheme={toggleTheme} onNotif={() => setShowNotif(true)} />
+        <div className="main-area">
+          <header className="top-bar">
+            <GlobalSearch onNavigate={setActivePage} />
+            <div className="top-bar-actions">
+              <QuickActions onNavigate={setActivePage} />
+              <button className="top-bar-notif" onClick={() => setShowNotif(true)} title="Notifications">
+                🔔
+              </button>
+            </div>
+          </header>
+          <main className="main-content">
+            {pages[activePage] || <Dashboard user={user} onNavigate={setActivePage} />}
+          </main>
+        </div>
       </div>
+      {showNotif && <NotificationCenter onClose={() => setShowNotif(false)} />}
     </KROSProvider>
   );
 }

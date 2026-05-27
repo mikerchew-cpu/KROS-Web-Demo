@@ -13,7 +13,9 @@ const NAV_ITEMS = [
   { id: "grade-control",icon:"⟳",label: "Grade Control" },
   { id: "stockpile",  icon: "△", label: "Stockpiles" },
   { id: "blasting",   icon: "✦", label: "Blast Analysis" },
-  { id: "safety",     icon: "⚠", label: "Safety & Fatigue",  section: "HSE" },
+  { id: "training",   icon: "◎", label: "Training Matrix" },
+  { id: "weather",    icon: "⛅", label: "Weather",          section: "HSE" },
+  { id: "safety",     icon: "⚠", label: "Safety & Fatigue" },
   { id: "environmental",icon:"🌿",label: "Environmental" },
   { id: "predictive-mt",icon:"🔧",label: "Predictive Maint" },
   { id: "exec-report",icon:"📈", label: "Executive Report",  section: "REPORTING" },
@@ -26,7 +28,7 @@ const NAV_ITEMS = [
 
 const ADMIN_ITEM = { id: "admin", icon: "◈", label: "Admin", section: "SYSTEM" };
 
-export default function Sidebar({ user, activePage, onNavigate, onLogout, theme, onToggleTheme }) {
+export default function Sidebar({ user, activePage, onNavigate, onLogout, theme, onToggleTheme, onNotif }) {
   const { notifications, activeEngine, aiEngines } = useKROS();
   const engine = aiEngines[activeEngine];
   const urgentCount = notifications.filter(n => n.type === "urgent").length;
@@ -62,21 +64,18 @@ export default function Sidebar({ user, activePage, onNavigate, onLogout, theme,
           );
         })}
       </div>
-      <div className="ai-engine-indicator">
-        <div className="ai-dot" style={{
-          background: engine.color === "purple" ? "var(--purple-light)" : engine.color === "gold" ? "var(--gold-light)" : "var(--teal-light)",
-          boxShadow: `0 0 6px ${engine.color === "purple" ? "var(--purple-light)" : engine.color === "gold" ? "var(--gold-light)" : "var(--teal-light)"}`,
-        }} />
-        <span className="ai-engine-label">{engine.emoji} {engine.name} · {engine.model}</span>
-      </div>
-      <div style={{ padding: "0 18px 8px", display: "flex", justifyContent: "center" }}>
-        <button onClick={onToggleTheme} className="btn btn-ghost btn-sm"
-          style={{ width: "100%", justifyContent: "center", fontSize: 13, gap: 6 }}>
+      <div className="sidebar-footer">
+        <div className="ai-engine-indicator" style={{ margin: "0 0 8px" }}>
+          <div className="ai-dot" style={{
+            background: engine.color === "purple" ? "var(--purple-light)" : engine.color === "gold" ? "var(--gold-light)" : "var(--teal-light)",
+            boxShadow: `0 0 6px ${engine.color === "purple" ? "var(--purple-light)" : engine.color === "gold" ? "var(--gold-light)" : "var(--teal-light)"}`,
+          }} />
+          <span className="ai-engine-label">{engine.emoji} {engine.name}</span>
+        </div>
+        <button onClick={onToggleTheme} className="btn btn-ghost btn-sm" style={{ width: "100%", justifyContent: "center", fontSize: 12, gap: 6, marginBottom: 8 }}>
           {theme === "dark" ? "☀️ Light" : "🌙 Dark"}
         </button>
-      </div>
-      <div className="sidebar-footer">
-        <div className="user-card" onClick={onLogout} title="Click to sign out">
+        <div className="user-card" onClick={onLogout} title="Sign out">
           <div className="user-avatar">{initials}</div>
           <div className="user-info">
             <div className="user-name">{user.givenName} {user.surname}</div>
