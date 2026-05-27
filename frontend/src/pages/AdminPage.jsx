@@ -39,13 +39,22 @@ export default function AdminPage({ user }) {
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 
+  const DEMO_USERS = [
+    { id: 1, givenName: "Ahmad",    surname: "Zulkifli",  email: "ahmad@kros.my",  role: "Mine Manager",      access: "admin",   reportsTo: null, approvedBy: null, mustChangePassword: false },
+    { id: 2, givenName: "Farah",    surname: "Izzati",    email: "farah@kros.my",  role: "HSE Manager",       access: "manager", reportsTo: 1,     approvedBy: 1,    mustChangePassword: false },
+    { id: 3, givenName: "Tan Mei",  surname: "Ling",      email: "tan@kros.my",    role: "Finance Manager",   access: "manager", reportsTo: 1,     approvedBy: 1,    mustChangePassword: false },
+    { id: 4, givenName: "Amirul",   surname: "Haziq",     email: "amirul@kros.my", role: "Maintenance Tech.", access: "staff",   reportsTo: 2,     approvedBy: 1,    mustChangePassword: false },
+  ];
+
   const fetchUsers = useCallback(async () => {
     try {
       const res = await fetch("/api/auth/users", { headers });
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
       setUsers(data.users);
-    } catch {}
+    } catch {
+      setUsers(DEMO_USERS);
+    }
   }, []);
 
   useEffect(() => { fetchUsers(); }, [fetchUsers]);

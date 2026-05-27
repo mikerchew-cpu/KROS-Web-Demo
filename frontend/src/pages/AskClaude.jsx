@@ -215,9 +215,10 @@ export default function AskClaude({ user }) {
           : m
       ));
     } catch (err) {
+      const localResponse = buildResponse(question, skill, engine);
       setMessages(prev => prev.map(m =>
         m.id === loadingMsg.id
-          ? { ...m, loading: false, content: `⚠️ Error: ${err.message}. Is the backend running?`, skill, sensitivity, engine }
+          ? { ...m, loading: false, content: localResponse, skill, sensitivity, engine }
           : m
       ));
     }

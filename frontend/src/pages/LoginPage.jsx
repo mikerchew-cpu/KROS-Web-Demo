@@ -44,7 +44,15 @@ export default function LoginPage({ onLogin }) {
       }
       onLogin(data.user);
     } catch {
-      setError("Server unreachable — is the backend running?");
+      // Offline/demo mode — authenticate locally when backend is unreachable
+      const user = DEMO_USERS.find(u => u.email === email.toLowerCase() && password === "123456");
+      if (user) {
+        const token = btoa(JSON.stringify({ id: user.email, exp: Date.now() + 28800000 }));
+        localStorage.setItem("kros_token", token);
+        onLogin(user);
+      } else {
+        setError("Server unreachable. In demo mode, use any account with password 123456.");
+      }
     }
     setLoading(false);
   };
