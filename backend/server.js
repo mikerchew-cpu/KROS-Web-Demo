@@ -171,7 +171,11 @@ app.post("/api/chat/stream", aiLimit, async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`✦ KROS v3.0 (Supabase) on port ${PORT}`);
-  console.log(`  Supabase: ${process.env.VITE_SUPABASE_URL || "configured"}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`✦ KROS v3.0 (Supabase) on port ${PORT}`);
+    console.log(`  Supabase: ${process.env.VITE_SUPABASE_URL || "configured"}`);
+  });
+}
+
+module.exports = app;

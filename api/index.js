@@ -1,10 +1,7 @@
-import { createServer } from "http";
-import { parse } from "url";
-import app from "./server";
+const app = require("../backend/server");
 
-export default function handler(req, res) {
-  const parsedUrl = parse(req.url, true);
-  req.query = parsedUrl.query;
-  req.path = parsedUrl.pathname;
+module.exports = async (req, res) => {
+  req.path = req.url.split("?")[0];
+  req.query = Object.fromEntries(new URL(req.url, "http://localhost").searchParams);
   return app(req, res);
-}
+};
