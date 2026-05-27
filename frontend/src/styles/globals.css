@@ -68,8 +68,8 @@
   --border-act: #3898ec;
 
   --text-primary:   #000000;
-  --text-secondary: #060640;
-  --text-muted:     #5d6c7b;
+  --text-secondary: #000000;
+  --text-muted:     #222222;
 
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
   --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
