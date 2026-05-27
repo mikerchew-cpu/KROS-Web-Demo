@@ -6,6 +6,7 @@ const NAV_ITEMS = [
   { id: "skills",     icon: "◫", label: "Skills Library" },
   { id: "prod-board", icon: "📊",label: "Production Board",  section: "OPERATIONS" },
   { id: "hrm",        icon: "👥", label: "HRM" },
+  { id: "assets",     icon: "🔧", label: "Assets",        section: "OPERATIONS" },
   { id: "workflow",   icon: "⚙", label: "Workflows" },
   { id: "handover",   icon: "⟳", label: "Shift Handover" },
   { id: "mine-analysis",icon:"⛏",label: "Mine Analysis" },

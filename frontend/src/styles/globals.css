@@ -2077,6 +2077,35 @@ tr:hover td { background: rgba(255,255,255,0.02); color: var(--text-primary); }
 
 .card-header-actions { display: flex; gap: 6px; }
 
+/* ── Asset Management ─────────────────────────────────────────── */
+.asset-layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
+.asset-list-panel { }
+.asset-list-header { display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+.asset-list-items { max-height: 620px; overflow-y: auto; }
+.asset-item { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.03); transition: background var(--transition); }
+.asset-item:hover { background: var(--surface-2); }
+.asset-item.selected { background: rgba(56,152,236,0.08); border-left: 3px solid var(--gold); }
+.asset-item-header { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+.asset-item-type { font-size: 11px; font-weight: 700; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.5px; }
+.asset-status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-left: auto; }
+.asset-status-dot.working { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.asset-status-dot.repair { background: var(--red); box-shadow: 0 0 6px var(--red); }
+.asset-status-dot.pm { background: var(--gold); }
+.asset-status-dot.standby { background: var(--teal-light); }
+.asset-status-dot.deployed { background: var(--purple-light); }
+.asset-status-dot.retired { background: var(--text-muted); }
+.asset-item-info { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+.asset-item-name { font-weight: 600; color: var(--text-primary); }
+.asset-item-plate { font-family: var(--font-mono); font-size: 11px; color: var(--gold); }
+.asset-item-meta { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px; }
+.asset-detail-panel { min-width: 0; }
+.asset-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.asset-doc-categories { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+.asset-doc-cat { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: var(--surface-2); border-radius: 8px; font-size: 11px; cursor: pointer; border: 1px solid transparent; transition: all var(--transition); }
+.asset-doc-cat:hover { border-color: var(--border-act); }
+.asset-doc-cat.has { border-color: rgba(45,125,74,0.3); }
+.asset-doc-cat-name { color: var(--text-primary); font-weight: 500; }
+
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
