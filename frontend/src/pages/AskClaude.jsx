@@ -35,6 +35,32 @@ function detectSkill(text) {
   if (t.includes("royalty") || t.includes("statutory") || t.includes("tax")) return "fin_royalty";
   if (t.includes("budget") || t.includes("cost code") || t.includes("variance")) return "fin_budget";
   if (t.includes("effluent") || t.includes("doe") || t.includes("tailings") || t.includes("environment")) return "env_report";
+  
+  // New AI analysis skills
+  if (t.includes("ai analysis") || t.includes("artificial intelligence") || t.includes("ai operations")) return "ops_ai_analysis";
+  if (t.includes("ai safety") || t.includes("ai hazard") || t.includes("ai incident")) return "hse_ai_analysis";
+  if (t.includes("ai hr") || t.includes("ai workforce") || t.includes("ai attrition")) return "hrm_ai_analysis";
+  if (t.includes("ai financial") || t.includes("ai budget") || t.includes("ai cost")) return "fin_ai_analysis";
+  if (t.includes("ai maintenance") || t.includes("ai predictive") || t.includes("ai fault")) return "maint_ai_analysis";
+  if (t.includes("ai environmental") || t.includes("ai environment") || t.includes("ai compliance")) return "env_ai_analysis";
+  if (t.includes("ai project") || t.includes("ai schedule") || t.includes("ai risk")) return "proj_ai_analysis";
+  
+  // New modules - quality
+  if (t.includes("quality inspection") || t.includes("qa inspection")) return "qa_inspection";
+  if (t.includes("lab testing") || t.includes("laboratory testing") || t.includes("qa lab")) return "qa_lab_testing";
+  
+  // New modules - logistics
+  if (t.includes("inventory management") || t.includes("log inventory")) return "log_inventory";
+  if (t.includes("transport logistics") || t.includes("haulage") || t.includes("log transport")) return "log_transport";
+  
+  // New modules - energy
+  if (t.includes("power management") || t.includes("eng power")) return "eng_power_mgmt";
+  if (t.includes("energy optimisation") || t.includes("energy optimization") || t.includes("eng optimization")) return "eng_optimization";
+  
+  // New modules - community
+  if (t.includes("community relations") || t.includes("stakeholder") || t.includes("csr")) return "com_relations";
+  if (t.includes("community complaints") || t.includes("grievance") || t.includes("feedback")) return "com_complaints";
+  
   return null;
 }
 
@@ -53,7 +79,7 @@ function buildResponse(question, skill, engine) {
     ops_shift_handover: `**Shift Handover Checklist** — from \`ops_shift_handover.md\`\n\nHere's the 6-section checklist (Form OPS-S01):\n\n**Section A — Production Status**\n☐ Actual vs plan for this shift (tonnes mined, processed, metres drilled)\n☐ Carry-forward tasks not completed and reason\n☐ Current mining faces / active areas\n\n**Section B — Equipment Status**\n☐ Equipment available for next shift\n☐ Equipment under maintenance — estimated return to service\n☐ Defect reports raised this shift\n\n**Section C — Safety & Compliance**\n☐ All active PTWs listed with expiry times\n☐ Active isolations / locked-out equipment\n☐ Near-misses or incidents this shift\n☐ Ground conditions of concern\n\n**Section D — People**\n☐ Headcount on site\n☐ Any staff injury or welfare concern\n☐ Contractor activities on site\n\n**Section E — Outstanding Actions**\n☐ Previous shift actions — completed or carried forward?\n☐ Urgent actions for incoming shift\n\n**Section F — Supervisor Sign-off**\n☐ Outgoing supervisor signature + time\n☐ Incoming supervisor signature + time\n\n⚠️ **The Zero-Gap Rule:** Always include a minimum 5-minute verbal briefing. The form does not replace face-to-face confirmation.\n\n📎 Source: \`ops_shift_handover.md\` — Full 6-section handover structure`,
   };
 
-  const defaultResponse = `I've searched the KROS knowledge base for your query.\n\nBased on the relevant SKILL.md files, here is my guidance:\n\n**Your question:** "${question}"\n\nI can help you navigate this using the KROS knowledge base. Please check the relevant skill file for detailed procedures. If this process isn't yet documented in KROS, this interaction has been flagged to the relevant skill owner to update the documentation.\n\n💡 **Tip:** For the most accurate guidance, try asking a more specific question — for example, name the specific equipment, process, or regulation you're dealing with.\n\n📎 Knowledge base searched: All 20 SKILL.md files`;
+   const defaultResponse = `I've searched the KROS knowledge base for your query.\n\nBased on the relevant SKILL.md files, here is my guidance:\n\n**Your question:** "${question}"\n\nI can help you navigate this using the KROS knowledge base. Please check the relevant skill file for detailed procedures. If this process isn't yet documented in KROS, this interaction has been flagged to the relevant skill owner to update the documentation.\n\n💡 **Tip:** For the most accurate guidance, try asking a more specific question — for example, name the specific equipment, process, or regulation you're dealing with.\n\n📎 Knowledge base searched: All 35 SKILL.md files`;
 
   return responses[skill] || defaultResponse;
 }
