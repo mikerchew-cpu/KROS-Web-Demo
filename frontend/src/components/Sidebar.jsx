@@ -2,16 +2,26 @@ import { useKROS } from "../context/KROSContext";
 
 const NAV_ITEMS = [
   { id: "dashboard",  icon: "⬡", label: "Dashboard" },
-  { id: "ask",        icon: "✦", label: "Ask AI",         section: "AI" },
+  { id: "ask",        icon: "✦", label: "Ask AI",           section: "AI" },
   { id: "skills",     icon: "◫", label: "Skills Library" },
-  { id: "workflow",   icon: "⚙", label: "Workflow" },
+  { id: "prod-board", icon: "📊",label: "Production Board",  section: "OPERATIONS" },
+  { id: "workflow",   icon: "⚙", label: "Workflows" },
+  { id: "handover",   icon: "⟳", label: "Shift Handover" },
   { id: "mine-analysis",icon:"⛏",label: "Mine Analysis" },
-  { id: "production", icon: "📊",label: "Production" },
+  { id: "production", icon: "⬡", label: "Production" },
+  { id: "weightbridge",icon:"◈", label: "Fleet & Weigh" },
+  { id: "grade-control",icon:"⟳",label: "Grade Control" },
+  { id: "stockpile",  icon: "△", label: "Stockpiles" },
+  { id: "blasting",   icon: "✦", label: "Blast Analysis" },
+  { id: "safety",     icon: "⚠", label: "Safety & Fatigue",  section: "HSE" },
+  { id: "environmental",icon:"🌿",label: "Environmental" },
+  { id: "predictive-mt",icon:"🔧",label: "Predictive Maint" },
+  { id: "exec-report",icon:"📈", label: "Executive Report",  section: "REPORTING" },
   { id: "succession", icon: "⟳", label: "Succession" },
   { id: "exit",       icon: "◳", label: "Exit Capture" },
   { id: "compliance", icon: "⚖", label: "Compliance" },
   { id: "manual",     icon: "◈", label: "User Manual" },
-  { id: "settings",   icon: "◎", label: "Settings",       section: "SYSTEM" },
+  { id: "settings",   icon: "◎", label: "Settings",          section: "SYSTEM" },
 ];
 
 const ADMIN_ITEM = { id: "admin", icon: "◈", label: "Admin", section: "SYSTEM" };
@@ -20,14 +30,11 @@ export default function Sidebar({ user, activePage, onNavigate, onLogout, theme,
   const { notifications, activeEngine, aiEngines } = useKROS();
   const engine = aiEngines[activeEngine];
   const urgentCount = notifications.filter(n => n.type === "urgent").length;
-
   const isAdmin = user.access === "admin";
   const visibleNav = isAdmin
     ? [...NAV_ITEMS.slice(0, -1), ADMIN_ITEM, ...NAV_ITEMS.slice(-1)]
     : NAV_ITEMS;
-
   const initials = ((user.givenName?.[0] || "") + (user.surname?.[0] || "")).toUpperCase().slice(0, 2);
-
   let lastSection = null;
 
   return (
@@ -37,9 +44,8 @@ export default function Sidebar({ user, activePage, onNavigate, onLogout, theme,
           <div className="logo-icon">KR</div>
           <span className="logo-text">KROS</span>
         </div>
-        <div className="logo-sub">Knowledge Engine</div>
+        <div className="logo-sub">Mine Ops System</div>
       </div>
-
       <div className="sidebar-nav">
         {visibleNav.map(item => {
           const showSection = item.section && item.section !== lastSection;
@@ -50,15 +56,12 @@ export default function Sidebar({ user, activePage, onNavigate, onLogout, theme,
               <div className={`nav-item${activePage === item.id ? " active" : ""}`} onClick={() => onNavigate(item.id)}>
                 <span className="nav-icon">{item.icon}</span>
                 <span>{item.label}</span>
-                {item.id === "dashboard" && urgentCount > 0 && (
-                  <span className="nav-badge">{urgentCount}</span>
-                )}
+                {item.id === "dashboard" && urgentCount > 0 && <span className="nav-badge">{urgentCount}</span>}
               </div>
             </div>
           );
         })}
       </div>
-
       <div className="ai-engine-indicator">
         <div className="ai-dot" style={{
           background: engine.color === "purple" ? "var(--purple-light)" : engine.color === "gold" ? "var(--gold-light)" : "var(--teal-light)",
@@ -66,15 +69,12 @@ export default function Sidebar({ user, activePage, onNavigate, onLogout, theme,
         }} />
         <span className="ai-engine-label">{engine.emoji} {engine.name} · {engine.model}</span>
       </div>
-
       <div style={{ padding: "0 18px 8px", display: "flex", justifyContent: "center" }}>
         <button onClick={onToggleTheme} className="btn btn-ghost btn-sm"
-          style={{ width: "100%", justifyContent: "center", fontSize: 13, gap: 6 }}
-          title={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}>
+          style={{ width: "100%", justifyContent: "center", fontSize: 13, gap: 6 }}>
           {theme === "dark" ? "☀️ Light" : "🌙 Dark"}
         </button>
       </div>
-
       <div className="sidebar-footer">
         <div className="user-card" onClick={onLogout} title="Click to sign out">
           <div className="user-avatar">{initials}</div>

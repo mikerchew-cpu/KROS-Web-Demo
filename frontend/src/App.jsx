@@ -14,6 +14,16 @@ import Workflow from "./pages/Workflow";
 import MineAnalysis from "./pages/MineAnalysis";
 import ProductionAnalysis from "./pages/ProductionAnalysis";
 import UserManual from "./pages/UserManual";
+import ProductionBoard from "./pages/ProductionBoard";
+import ShiftHandover from "./pages/ShiftHandover";
+import SafetyObservation from "./pages/SafetyObservation";
+import Weightbridge from "./pages/Weightbridge";
+import GradeControl from "./pages/GradeControl";
+import StockpileManager from "./pages/StockpileManager";
+import BlastDashboard from "./pages/BlastDashboard";
+import EnvironmentalMonitor from "./pages/EnvironmentalMonitor";
+import PredictiveMaintenance from "./pages/PredictiveMaintenance";
+import ExecutiveReport from "./pages/ExecutiveReport";
 import "./styles/globals.css";
 
 export default function App() {
@@ -29,57 +39,48 @@ export default function App() {
 
   const toggleTheme = () => setTheme(prev => prev === "dark" ? "light" : "dark");
 
-  const restoreSession = () => {
+  useEffect(() => {
     const stored = localStorage.getItem("kros_user");
     const token = localStorage.getItem("kros_token");
     if (stored && token) {
       try {
         const parsed = JSON.parse(stored);
         const tokenData = JSON.parse(atob(token));
-        if (tokenData.exp && tokenData.exp > Date.now()) {
-          setUser(parsed);
-          return true;
-        }
+        if (tokenData.exp && tokenData.exp > Date.now()) { setUser(parsed); return; }
       } catch {}
-      localStorage.removeItem("kros_user");
-      localStorage.removeItem("kros_token");
     }
-    return false;
-  };
+  }, []);
 
-  useEffect(() => { restoreSession(); }, []);
-
-  const handleLogin = (u) => {
-    localStorage.setItem("kros_user", JSON.stringify(u));
-    setUser(u);
-    setActivePage("dashboard");
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("kros_user");
-    localStorage.removeItem("kros_token");
-    setShowLogin(false);
-    setUser(null);
-  };
-
+  const handleLogin = (u) => { localStorage.setItem("kros_user", JSON.stringify(u)); setUser(u); setActivePage("dashboard"); };
+  const handleLogout = () => { localStorage.removeItem("kros_user"); localStorage.removeItem("kros_token"); setShowLogin(false); setUser(null); };
   window.__KROS_NAV = setActivePage;
 
   if (!user && !showLogin) return <LandingPage onGetStarted={() => setShowLogin(true)} theme={theme} onToggleTheme={toggleTheme} />;
   if (!user) return <LoginPage onLogin={handleLogin} />;
 
   const pages = {
-    dashboard:          <Dashboard   user={user} onNavigate={setActivePage} />,
-    skills:             <SkillsLibrary onNavigate={setActivePage} />,
-    ask:                <AskClaude   user={user} />,
-    succession:         <SuccessionMap />,
-    exit:               <ExitCapture />,
-    compliance:         <Compliance />,
-    admin:              <AdminPage   user={user} />,
-    settings:           <Settings    user={user} onLogout={handleLogout} />,
-    workflow:           <Workflow />,
-    "mine-analysis":    <MineAnalysis />,
-    "production":       <ProductionAnalysis />,
-    manual:             <UserManual />,
+    dashboard:       <Dashboard        user={user} onNavigate={setActivePage} />,
+    skills:          <SkillsLibrary    onNavigate={setActivePage} />,
+    ask:             <AskClaude        user={user} />,
+    succession:      <SuccessionMap />,
+    exit:            <ExitCapture />,
+    compliance:      <Compliance />,
+    admin:           <AdminPage        user={user} />,
+    settings:        <Settings         user={user} onLogout={handleLogout} />,
+    workflow:        <Workflow />,
+    "mine-analysis": <MineAnalysis />,
+    "production":    <ProductionAnalysis />,
+    manual:          <UserManual />,
+    "prod-board":    <ProductionBoard />,
+    "handover":      <ShiftHandover />,
+    "safety":        <SafetyObservation />,
+    "weightbridge":  <Weightbridge />,
+    "grade-control": <GradeControl />,
+    "stockpile":     <StockpileManager />,
+    "blasting":      <BlastDashboard />,
+    "environmental": <EnvironmentalMonitor />,
+    "predictive-mt": <PredictiveMaintenance />,
+    "exec-report":   <ExecutiveReport />,
   };
 
   return (
