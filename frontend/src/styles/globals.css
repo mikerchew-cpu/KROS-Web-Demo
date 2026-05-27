@@ -2049,6 +2049,34 @@ tr:hover td { background: rgba(255,255,255,0.02); color: var(--text-primary); }
 .hrm-doc-name { font-size: 12px; font-weight: 600; color: var(--text-primary); }
 .hrm-doc-meta { font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); }
 
+/* ── Dashboard Customisation ──────────────────────────────────── */
+.dash-config-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.dash-config-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; cursor: pointer; border: 1px solid var(--border); background: var(--surface-2); transition: all var(--transition); }
+.dash-config-item:hover { border-color: var(--border-act); }
+.dash-config-item.active { border-color: var(--gold); background: rgba(56,152,236,0.06); }
+.dash-config-icon { font-size: 18px; flex-shrink: 0; }
+.dash-config-info { flex: 1; min-width: 0; }
+.dash-config-name { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+.dash-config-depts { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
+.dash-config-dept { font-size: 8px; font-family: var(--font-mono); padding: 1px 5px; border-radius: 4px; background: var(--surface-3); color: var(--text-muted); text-transform: uppercase; }
+.dash-config-toggle { font-size: 10px; font-weight: 700; font-family: var(--font-mono); padding: 2px 8px; border-radius: 10px; }
+.dash-config-toggle.on { background: var(--green); color: white; }
+.dash-config-toggle.off { background: var(--surface-3); color: var(--text-muted); }
+
+.dash-widget-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.dash-widget-full { grid-column: 1 / -1; }
+.dash-widget-half { }
+
+.dash-mini-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 12px; }
+.dash-mini-stat { text-align: center; padding: 10px; background: var(--surface-2); border-radius: 8px; }
+.dash-mini-val { display: block; font-size: 20px; font-weight: 800; color: var(--text-primary); font-family: var(--font-display); }
+.dash-mini-label { display: block; font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px; }
+
+.dash-weather-mini { display: flex; gap: 8px; margin-bottom: 12px; }
+.dash-weather-day { flex: 1; text-align: center; padding: 8px 4px; background: var(--surface-2); border-radius: 8px; font-size: 11px; font-weight: 600; color: var(--text-primary); font-family: var(--font-mono); }
+
+.card-header-actions { display: flex; gap: 6px; }
+
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
