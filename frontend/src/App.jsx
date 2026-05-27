@@ -29,6 +29,7 @@ import PredictiveMaintenance from "./pages/PredictiveMaintenance";
 import ExecutiveReport from "./pages/ExecutiveReport";
 import TrainingMatrix from "./pages/TrainingMatrix";
 import WeatherDashboard from "./pages/WeatherDashboard";
+import HRMModule from "./pages/HRMModule";
 import "./styles/globals.css";
 
 export default function App() {
@@ -89,6 +90,7 @@ export default function App() {
     "exec-report":   <ExecutiveReport />,
     "training":      <TrainingMatrix />,
     "weather":       <WeatherDashboard />,
+    "hrm":           <HRMModule />,
   };
 
   return (
