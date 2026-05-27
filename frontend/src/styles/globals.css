@@ -97,10 +97,10 @@
   border: 1px solid rgba(56,152,236,0.3);
 }
 
-[data-theme="light"] .alert-warn  { color: #222; }
-[data-theme="light"] .alert-error { color: #8B0000; }
-[data-theme="light"] .alert-info  { color: #222; }
-[data-theme="light"] .alert-ai    { color: #222; }
+[data-theme="light"] .alert-warn  { color: #000; }
+[data-theme="light"] .alert-error { color: #000; }
+[data-theme="light"] .alert-info  { color: #000; }
+[data-theme="light"] .alert-ai    { color: #000; }
 
 /* ── Reset ───────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
