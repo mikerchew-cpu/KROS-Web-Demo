@@ -1620,6 +1620,21 @@ tr:hover td { background: rgba(255,255,255,0.02); color: var(--text-primary); }
 .prod-mine-select-row { display: flex; gap: 6px; align-items: center; }
 .prod-mine-select-row .form-select { flex: 1; }
 
+/* ── Mine Info Panel ──────────────────────────────────────────── */
+.modal-wide { max-width: 720px; }
+.mine-info-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.mine-info-panel { }
+.mine-info-section-title { font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.mine-detail-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 12px; color: var(--text-secondary); border-bottom: 1px solid rgba(255,255,255,0.04); }
+.mine-detail-label { font-weight: 600; color: var(--text-muted); font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+.mine-alert-text { color: var(--red); font-weight: 700; }
+.mine-docs-list { display: flex; flex-direction: column; gap: 6px; }
+.mine-doc-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: var(--surface-2); border-radius: 8px; border: 1px solid transparent; }
+.mine-doc-item.has-doc { border-color: var(--border); }
+.mine-doc-info { flex: 1; min-width: 0; }
+.mine-doc-name { font-size: 11px; font-weight: 600; color: var(--text-primary); }
+.mine-doc-meta { font-size: 9px; color: var(--text-muted); font-family: var(--font-mono); }
+
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
