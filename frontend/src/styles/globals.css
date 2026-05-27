@@ -50,13 +50,13 @@
   --gold:       #3898ec;
   --gold-light: #0082f3;
   --teal:       #2895f7;
-  --teal-light: #d7f2ff;
+  --teal-light: #005580;
   --purple:     #82829f;
-  --purple-light:#e6e6ff;
+  --purple-light:#4A3060;
   --purple-dark: #5d6c7b;
-  --red:        #ea384c;
-  --green:      #4DC952;
-  --green-light:#86D981;
+  --red:        #B22222;
+  --green:      #2D7D4A;
+  --green-light:#1A5C30;
 
   --surface-0:  #fafafa;
   --surface-1:  #ffffff;
@@ -69,7 +69,7 @@
 
   --text-primary:   #000000;
   --text-secondary: #000000;
-  --text-muted:     #222222;
+  --text-muted:     #000000;
 
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
   --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
