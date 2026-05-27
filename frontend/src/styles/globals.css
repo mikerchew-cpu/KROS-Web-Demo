@@ -67,9 +67,9 @@
   --border:     #D9DAE5;
   --border-act: #00ade4;
 
-  --text-primary:   #0B0B0D;
-  --text-secondary: #2D2D3A;
-  --text-muted:     #555666;
+  --text-primary:   #000000;
+  --text-secondary: #1A1A1A;
+  --text-muted:     #333333;
 
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
   --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
