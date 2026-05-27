@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, useEffect } from "react";
 
 const KROSContext = createContext(null);
 
@@ -45,13 +45,14 @@ export const AI_ENGINES = {
 // Smart router: pick AI based on data sensitivity
 export function routeAI(sensitivity, userPreference = null) {
   if (userPreference) return userPreference;
-  if (sensitivity === "high" || sensitivity === "medium") return "claude";
-  return "deepseek"; // low sensitivity — use cheaper DeepSeek
+  if (sensitivity === "high" || sensitivity === "medium") return "gemini";
+  return "deepseek";
 }
 
 export function KROSProvider({ children }) {
   const [chatHistory, setChatHistory] = useState([]);
-  const [activeEngine, setActiveEngine] = useState("claude");
+  const [activeEngine, setActiveEngine] = useState("deepseek");
+  const [skills, setSkills] = useState(SKILLS_DATA);
   const [notifications, setNotifications] = useState([
     { id: 1, type: "urgent", message: "hrm_succession.md is 5 months overdue for review", skill: "hrm_succession" },
     { id: 2, type: "warn",   message: "fin_royalty.md — verify rates before next submission", skill: "fin_royalty" },
@@ -63,6 +64,18 @@ export function KROSProvider({ children }) {
     setChatHistory(prev => [...prev, { ...msg, id: Date.now() + Math.random() }]);
   }, []);
 
+  const addSkill = useCallback((skill) => {
+    setSkills(prev => [...prev, skill]);
+  }, []);
+
+  const updateSkill = useCallback((id, data) => {
+    setSkills(prev => prev.map(s => s.id === id ? { ...s, ...data } : s));
+  }, []);
+
+  const removeSkill = useCallback((id) => {
+    setSkills(prev => prev.filter(s => s.id !== id));
+  }, []);
+
   const clearNotification = useCallback((id) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
   }, []);
@@ -72,7 +85,7 @@ export function KROSProvider({ children }) {
       chatHistory, setChatHistory, addMessage,
       activeEngine, setActiveEngine,
       notifications, clearNotification,
-      skills: SKILLS_DATA,
+      skills, addSkill, updateSkill, removeSkill,
       succession: SUCCESSION_DATA,
       aiEngines: AI_ENGINES,
       routeAI,

@@ -35,7 +35,7 @@ export default function Dashboard({ user, onNavigate }) {
       {/* Header */}
       <div className="page-header">
         <div>
-          <div className="page-title">Good morning, {user.name.split(" ")[0]} 👋</div>
+          <div className="page-title">Good morning, {user.givenName} 👋</div>
           <div className="page-subtitle">{user.role} · {new Date().toLocaleDateString("en-MY", { weekday:"long", day:"numeric", month:"long", year:"numeric" })}</div>
         </div>
         <div style={{ display: "flex", gap: 10 }}>

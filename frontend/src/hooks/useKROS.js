@@ -240,13 +240,13 @@ export function useCompliance() {
 
 // ── useAIRouter ────────────────────────────────────────────────
 export function useAIRouter() {
-  const [override, setOverride] = useState(null); // "claude" | "deepseek" | null
+  const [override, setOverride] = useState(null);
 
   const route = useCallback(
     (text) => {
       if (override) return override;
       const sens = detectSensitivity(text);
-      return sens === "low" ? "deepseek" : "claude";
+      return sens === "low" ? "deepseek" : "gemini";
     },
     [override]
   );
@@ -254,9 +254,9 @@ export function useAIRouter() {
   const sensitivityLabel = (text) => {
     const s = detectSensitivity(text);
     return {
-      low:    { label: "Low",    color: "var(--green-light)", engine: "DeepSeek" },
-      medium: { label: "Medium", color: "var(--gold)",        engine: "Claude"   },
-      high:   { label: "High",   color: "var(--red)",         engine: "Claude"   },
+      low:    { label: "Low",    color: "var(--green-light)", engine: "DeepSeek (default)" },
+      medium: { label: "Medium", color: "var(--gold)",        engine: "Gemini"   },
+      high:   { label: "High",   color: "var(--red)",         engine: "Gemini"   },
     }[s];
   };
 

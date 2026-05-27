@@ -60,10 +60,12 @@ function buildResponse(question, skill, engine) {
 
 function MessageBubble({ msg }) {
   const isUser = msg.role === "user";
+  const engineColor = msg.engine === "claude" ? "purple" : msg.engine === "gemini" ? "gold" : "teal";
+  const engineLabel = msg.engine === "claude" ? "✦ Claude" : msg.engine === "gemini" ? "◉ Gemini" : "◈ DeepSeek";
   return (
     <div className={`message ${isUser ? "user" : "ai"}`}>
       <div className="message-avatar">
-        {isUser ? msg.initials || "U" : msg.engine === "deepseek" ? "◈" : "✦"}
+        {isUser ? msg.initials || "U" : msg.engine === "deepseek" ? "◈" : msg.engine === "gemini" ? "◉" : "✦"}
       </div>
       <div style={{ flex: 1, maxWidth: "72%" }}>
         <div className={`message-bubble`}>
@@ -83,10 +85,11 @@ function MessageBubble({ msg }) {
         <div className="message-meta">
           <span>{msg.time}</span>
           {msg.engine && (
-            <span className={`badge badge-${msg.engine === "claude" ? "purple" : "teal"}`} style={{ fontSize: 9, padding: "1px 6px" }}>
-              {msg.engine === "claude" ? "✦ Claude" : "◈ DeepSeek"}
+            <span className={`badge badge-${engineColor}`} style={{ fontSize: 9, padding: "1px 6px" }}>
+              {engineLabel}
             </span>
           )}
+
           {msg.skill && <span className="skill-ref">{msg.skill}.md</span>}
           {msg.sensitivity && (
             <span className="sensitivity-tag">
@@ -105,7 +108,7 @@ export default function AskClaude({ user }) {
   const [messages, setMessages] = useState([
     {
       id: 0, role: "ai", engine: "claude",
-      content: `Hello ${user.name.split(" ")[0]}! I'm KROS AI, your knowledge guide.\n\nI have access to all 20 SKILL.md files in your knowledge base. Ask me anything about:\n\n• **Operations** — SOPs, shift handover, incident procedures\n• **Safety / HSE** — PTW, HAZOP, emergency response\n• **HR** — Onboarding, payroll, succession, exit capture\n• **Finance** — Cost coding, royalties, statutory payments\n• **Maintenance** — PM schedules, breakdown response\n• **Compliance** — DOE, DOSH, EPF, SOCSO, HRDF\n\nI automatically route sensitive queries (HR, financial data) to Claude and general operational queries to DeepSeek to optimise cost and data security.`,
+      content: `Hello ${user.givenName}! I'm KROS AI, your knowledge guide.\n\nI have access to all 20 SKILL.md files in your knowledge base. Ask me anything about:\n\n• **Operations** — SOPs, shift handover, incident procedures\n• **Safety / HSE** — PTW, HAZOP, emergency response\n• **HR** — Onboarding, payroll, succession, exit capture\n• **Finance** — Cost coding, royalties, statutory payments\n• **Maintenance** — PM schedules, breakdown response\n• **Compliance** — DOE, DOSH, EPF, SOCSO, HRDF\n\nI default to DeepSeek for operational queries and route sensitive data (HR, financial) to Gemini for security.`,
       time: new Date().toLocaleTimeString("en-MY", { hour: "2-digit", minute: "2-digit" }),
     }
   ]);
@@ -114,11 +117,27 @@ export default function AskClaude({ user }) {
   const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef(null);
   const textareaRef = useRef(null);
-  const initials = user.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+  const initials = ((user.givenName?.[0] || "") + (user.surname?.[0] || "")).toUpperCase().slice(0, 2);
+
+  const sentSkillRef = useRef(false);
+  const handleSendRef = useRef(null);
+
+  useEffect(() => { handleSendRef.current = handleSend; });
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    if (sentSkillRef.current) return;
+    const stored = sessionStorage.getItem("kros_ask_skill");
+    if (stored) {
+      sentSkillRef.current = true;
+      sessionStorage.removeItem("kros_ask_skill");
+      const skill = JSON.parse(stored);
+      setTimeout(() => handleSendRef.current?.(`Tell me about the skill "${skill.title}" (${skill.id}.md) — what are the key procedures I need to know?`), 100);
+    }
+  }, []);
 
   const handleSend = async (questionOverride = null) => {
     const question = questionOverride || input.trim();
@@ -129,6 +148,7 @@ export default function AskClaude({ user }) {
     const skill = detectSkill(question);
     const engine = routeAI(sensitivity, userPreference);
     const now = new Date().toLocaleTimeString("en-MY", { hour: "2-digit", minute: "2-digit" });
+    const token = localStorage.getItem("kros_token");
 
     // Add user message
     const userMsg = { id: Date.now(), role: "user", content: question, initials, time: now };
@@ -136,18 +156,73 @@ export default function AskClaude({ user }) {
     setMessages(prev => [...prev, userMsg, loadingMsg]);
     setIsLoading(true);
 
-    // Simulate API call delay
-    await new Promise(r => setTimeout(r, 1400 + Math.random() * 800));
+    try {
+      const res = await fetch("/api/chat/stream", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          messages: [...messages, userMsg].filter(m => !m.loading).map(m => ({ role: m.role, content: m.content })),
+          engineOverride: userPreference,
+        }),
+      });
 
-    const responseContent = buildResponse(question, skill, engine);
+      if (!res.ok) {
+        throw new Error(`API error ${res.status}`);
+      }
 
-    setMessages(prev => prev.map(m =>
-      m.id === loadingMsg.id
-        ? { ...m, loading: false, content: responseContent, skill, sensitivity }
-        : m
-    ));
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = "";
+      let engineUsed = engine;
+      let streamError = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const lines = decoder.decode(value).split("\n");
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          try {
+            const evt = JSON.parse(line.slice(6));
+            if (evt.type === "engine") {
+              engineUsed = evt.engine;
+            }
+            if (evt.type === "error") {
+              streamError = evt.message;
+            }
+            if (evt.type === "text") {
+              fullText += evt.text;
+              setMessages(prev => prev.map(m =>
+                m.id === loadingMsg.id
+                  ? { ...m, loading: false, content: fullText, skill, sensitivity, engine: engineUsed }
+                  : m
+              ));
+            }
+          } catch {}
+        }
+      }
+
+      // Final update
+      const finalContent = streamError
+        ? `⚠️ AI Error: ${streamError}`
+        : fullText || "⚠️ The AI returned an empty response. Check that the API keys are configured in Settings.";
+      setMessages(prev => prev.map(m =>
+        m.id === loadingMsg.id
+          ? { ...m, loading: false, content: finalContent, skill, sensitivity, engine: engineUsed }
+          : m
+      ));
+    } catch (err) {
+      setMessages(prev => prev.map(m =>
+        m.id === loadingMsg.id
+          ? { ...m, loading: false, content: `⚠️ Error: ${err.message}. Is the backend running?`, skill, sensitivity, engine }
+          : m
+      ));
+    }
     setIsLoading(false);
-    setActiveEngine(engine);
+    if (engine !== activeEngine) setActiveEngine(engine);
   };
 
   const handleKeyDown = (e) => {
@@ -166,12 +241,12 @@ export default function AskClaude({ user }) {
       <div className="page-header" style={{ flexShrink: 0, marginBottom: 16 }}>
         <div>
           <div className="page-title">Ask KROS AI</div>
-          <div className="page-subtitle">Your 24/7 operational knowledge guide — powered by Claude, DeepSeek &amp; Gemini</div>
+          <div className="page-subtitle">Your 24/7 operational knowledge guide — powered by DeepSeek, Claude &amp; Gemini</div>
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>Smart routing:</div>
-          <span className="badge badge-purple">High sensitivity → Claude</span>
-          <span className="badge badge-teal">Low sensitivity → DeepSeek</span>
+          <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>Routing:</div>
+          <span className="badge badge-teal">Default → DeepSeek</span>
+          <span className="badge badge-gold">Sensitive → Gemini</span>
         </div>
       </div>
 
@@ -208,7 +283,7 @@ export default function AskClaude({ user }) {
         {/* Data routing notice */}
         {currentSensitivity && (
           <div style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: "var(--text-muted)" }}>
-            <span>Auto-routing to:</span>
+            <span>Routing to:</span>
             <span className={`badge badge-${currentEngine === "claude" ? "purple" : currentEngine === "gemini" ? "gold" : "teal"}`}>
               {currentEngine === "claude" ? "✦ Claude (claude-sonnet-4-6)" : currentEngine === "gemini" ? "◉ Gemini (gemini-2.0-flash)" : "◈ DeepSeek (deepseek-chat)"}
             </span>
@@ -239,16 +314,16 @@ export default function AskClaude({ user }) {
               <div className="ai-selector">
                 <span style={{ fontSize: 11, color: "var(--text-muted)", alignSelf: "center" }}>Override:</span>
                 <button
-                  className={`ai-chip${userPreference === "claude" ? " active-claude" : ""}`}
-                  onClick={() => setUserPreference(prev => prev === "claude" ? null : "claude")}
-                >
-                  ✦ Claude
-                </button>
-                <button
                   className={`ai-chip${userPreference === "deepseek" ? " active-deepseek" : ""}`}
                   onClick={() => setUserPreference(prev => prev === "deepseek" ? null : "deepseek")}
                 >
                   ◈ DeepSeek
+                </button>
+                <button
+                  className={`ai-chip${userPreference === "claude" ? " active-claude" : ""}`}
+                  onClick={() => setUserPreference(prev => prev === "claude" ? null : "claude")}
+                >
+                  ✦ Claude
                 </button>
                 <button
                   className={`ai-chip${userPreference === "gemini" ? " active-gemini" : ""}`}

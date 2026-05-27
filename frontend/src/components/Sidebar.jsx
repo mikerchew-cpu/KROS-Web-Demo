@@ -10,12 +10,19 @@ const NAV_ITEMS = [
   { id: "settings",   icon: "◎", label: "Settings",     section: "SYSTEM" },
 ];
 
+const ADMIN_ITEM = { id: "admin", icon: "◈", label: "Admin", section: "SYSTEM" };
+
 export default function Sidebar({ user, activePage, onNavigate, onLogout, theme, onToggleTheme }) {
   const { notifications, activeEngine, aiEngines } = useKROS();
   const engine = aiEngines[activeEngine];
   const urgentCount = notifications.filter(n => n.type === "urgent").length;
 
-  const initials = user.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+  const isAdmin = user.access === "admin";
+  const visibleNav = isAdmin
+    ? [...NAV_ITEMS.slice(0, -1), ADMIN_ITEM, ...NAV_ITEMS.slice(-1)]
+    : NAV_ITEMS;
+
+  const initials = ((user.givenName?.[0] || "") + (user.surname?.[0] || "")).toUpperCase().slice(0, 2);
 
   let lastSection = null;
 
@@ -32,7 +39,7 @@ export default function Sidebar({ user, activePage, onNavigate, onLogout, theme,
 
       {/* Nav */}
       <div className="sidebar-nav">
-        {NAV_ITEMS.map(item => {
+        {visibleNav.map(item => {
           const showSection = item.section && item.section !== lastSection;
           if (showSection) lastSection = item.section;
           return (
@@ -81,7 +88,7 @@ export default function Sidebar({ user, activePage, onNavigate, onLogout, theme,
         <div className="user-card" onClick={onLogout} title="Click to sign out">
           <div className="user-avatar">{initials}</div>
           <div className="user-info">
-            <div className="user-name">{user.name}</div>
+            <div className="user-name">{user.givenName} {user.surname}</div>
             <div className="user-role">{user.role}</div>
           </div>
           <span style={{ color: "var(--text-muted)", fontSize: 14 }}>⇥</span>

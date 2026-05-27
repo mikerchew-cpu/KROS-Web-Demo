@@ -101,11 +101,35 @@ export const skillsAPI = {
 
   get: (id) => apiFetch(`/skills/${id}`),
 
-  update: (id, content, changeNote) =>
+  create: (data) =>
+    apiFetch("/skills", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  upload: (file) => {
+    const token = localStorage.getItem("kros_token");
+    const formData = new FormData();
+    formData.append("file", file);
+    return fetch(`${BASE}/skills/upload`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+    }).then(async (res) => {
+      if (res.status === 401) { localStorage.removeItem("kros_token"); localStorage.removeItem("kros_user"); window.location.reload(); return; }
+      if (!res.ok) { const err = await res.json().catch(() => ({ error: "Upload failed" })); throw new Error(err.error || `HTTP ${res.status}`); }
+      return res.json();
+    });
+  },
+
+  update: (id, data) =>
     apiFetch(`/skills/${id}`, {
       method: "PUT",
-      body: JSON.stringify({ content, changeNote }),
+      body: JSON.stringify(data),
     }),
+
+  remove: (id) =>
+    apiFetch(`/skills/${id}`, { method: "DELETE" }),
 
   proposeUpdate: (id, proposedContent, reason) =>
     apiFetch(`/skills/${id}/propose`, {

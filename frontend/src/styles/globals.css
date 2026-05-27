@@ -44,13 +44,13 @@
 
 /* ── Light theme ─────────────────────────────────────────────── */
 [data-theme="light"] {
-  --navy:       #5B7FA5;
-  --navy-mid:   #7A9BB5;
-  --navy-light: #A5C0D4;
+  --navy:       #0ABAB5;
+  --navy-mid:   #4ECDC4;
+  --navy-light: #81D8D0;
   --gold:       #C4A35A;
   --gold-light: #D9BE7A;
-  --teal:       #7AABA5;
-  --teal-light: #9EC4BF;
+  --teal:       #0ABAB5;
+  --teal-light: #81D8D0;
   --purple:     #A58AC9;
   --purple-light:#C5B0DE;
   --purple-dark: #8B72B0;
@@ -58,22 +58,22 @@
   --green:      #8CB08A;
   --green-light:#A8C8A6;
 
-  --surface-0:  #E8E5E0;
-  --surface-1:  #F0EDE8;
-  --surface-2:  #D8D5D0;
-  --surface-3:  #CCC8C2;
-  --surface-4:  #BFBAB3;
+  --surface-0:  #F7F5F0;
+  --surface-1:  #FFFFFF;
+  --surface-2:  #F0EDE8;
+  --surface-3:  #E8E5E0;
+  --surface-4:  #DDDAD5;
 
-  --border:     rgba(0,0,0,0.08);
-  --border-act: rgba(196,163,90,0.5);
+  --border:     rgba(0,0,0,0.07);
+  --border-act: rgba(10,186,181,0.5);
 
-  --text-primary:   #2A2724;
-  --text-secondary: #6B655C;
-  --text-muted:     #9C958C;
+  --text-primary:   #1A1A1A;
+  --text-secondary: #555555;
+  --text-muted:     #999999;
 
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.08);
 }
 
 [data-theme="light"] .main-content {
@@ -94,11 +94,11 @@
 }
 
 [data-theme="light"] .nav-item.active {
-  background: rgba(196,163,90,0.12);
+  background: rgba(10,186,181,0.1);
 }
 
 [data-theme="light"] .ai-engine-indicator {
-  border: 1px solid rgba(128,90,213,0.3);
+  border: 1px solid rgba(10,186,181,0.3);
 }
 
 [data-theme="light"] .card:hover {
@@ -1216,8 +1216,8 @@ tr:hover td { background: rgba(255,255,255,0.02); color: var(--text-primary); }
 
 [data-theme="light"] .landing-hero-bg {
   background:
-    radial-gradient(ellipse 60% 40% at 30% 40%, rgba(214,158,46,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 40% at 80% 60%, rgba(128,90,213,0.08) 0%, transparent 60%);
+    radial-gradient(ellipse 60% 40% at 30% 40%, rgba(10,186,181,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 80% 60%, rgba(10,186,181,0.06) 0%, transparent 60%);
 }
 
 .landing-hero-content {

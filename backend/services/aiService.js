@@ -1,9 +1,3 @@
-/**
- * KROS AI Service
- * Handles routing between Claude and DeepSeek
- * Supports both standard and streaming responses
- */
-
 const fs   = require("fs");
 const path = require("path");
 
@@ -17,7 +11,7 @@ const GEMINI_MODEL  = "gemini-2.0-flash";
 // ── Skills loader ──────────────────────────────────────────────
 let skillsCache = null;
 let skillsCacheTime = 0;
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 5 * 60 * 1000;
 
 function loadSkills() {
   const now = Date.now();
@@ -35,9 +29,8 @@ function loadSkills() {
   const skills = {};
   function readDir(d) {
     fs.readdirSync(d, { withFileTypes: true }).forEach((entry) => {
-      if (entry.isDirectory()) {
-        readDir(path.join(d, entry.name));
-      } else if (entry.name.endsWith(".md")) {
+      if (entry.isDirectory()) readDir(path.join(d, entry.name));
+      else if (entry.name.endsWith(".md") && !entry.name.startsWith("._")) {
         const id = path.basename(entry.name, ".md");
         skills[id] = fs.readFileSync(path.join(d, entry.name), "utf8");
       }
@@ -63,7 +56,7 @@ function buildSystemPrompt(skills) {
 You have access to ${Object.keys(skills).length} SKILL.md files: ${skillList}
 
 YOUR ROLE:
-1. Answer operational questions using the SKILL.md content below
+1. Answer operational questions using the SKILL.md content below as your priority
 2. Walk staff through procedures step by step when requested
 3. Answer Malaysian statutory questions (EPF, SOCSO, HRDF, DOE, JMG, DOSH) accurately
 4. Always cite which SKILL.md file you are drawing from
@@ -72,10 +65,11 @@ YOUR ROLE:
 RULES:
 - Never contradict safety procedures — safety always takes priority
 - For LOTO/isolation: always emphasise zero-tolerance rules
-- Respond in the same language the user writes (Bahasa Malaysia or English)
+- Always respond in English regardless of the user's language
 - Structure responses clearly: use headers, bullet points, numbered steps
 - End every response with: 📎 Source: [skill_name].md — [section]
-- If no skill covers the question, say so honestly and suggest who to contact
+- If a skill file covers the question, use it and cite it
+- If NO skill file covers the question, suggest exactly where the user can find that data (e.g. "Check the Monthly EPF Statement in i-Akaun Majikan" or "Refer to the DOE e-Consult system for the latest effluent discharge limits"). If unsure, suggest who to contact (e.g. "Contact the HSE Manager for the latest PTW statistics")
 - NEVER make up procedures or rates — only use what is in the SKILL.md files
 
 SKILL.MD CONTENT:
@@ -84,7 +78,7 @@ ${skillContent}`;
 
 // ── Standard (non-streaming) call ─────────────────────────────
 async function callAI({ messages, engineOverride }) {
-  const engine   = engineOverride === "deepseek" ? "deepseek" : engineOverride === "gemini" ? "gemini" : "claude";
+  const engine   = engineOverride === "claude" ? "claude" : engineOverride === "gemini" ? "gemini" : "deepseek";
   const skills   = loadSkills();
   const sysPrompt = buildSystemPrompt(skills);
 
@@ -174,7 +168,7 @@ async function callAI({ messages, engineOverride }) {
 
 // ── Streaming call (Server-Sent Events) ───────────────────────
 async function streamAI({ messages, engineOverride, res: httpRes }) {
-  const engine    = engineOverride === "deepseek" ? "deepseek" : engineOverride === "gemini" ? "gemini" : "claude";
+  const engine    = engineOverride === "claude" ? "claude" : engineOverride === "gemini" ? "gemini" : "deepseek";
   const skills    = loadSkills();
   const sysPrompt = buildSystemPrompt(skills);
 
@@ -270,7 +264,6 @@ async function streamAI({ messages, engineOverride, res: httpRes }) {
       send({ type: "done" });
 
     } else {
-      // Gemini streaming
       const res = await fetch(`${GEMINI_API}/${GEMINI_MODEL}:streamGenerateContent?alt=sse&key=${process.env.GEMINI_API_KEY}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -310,4 +303,9 @@ async function streamAI({ messages, engineOverride, res: httpRes }) {
   }
 }
 
-module.exports = { callAI, streamAI, loadSkills };
+function invalidateSkillsCache() {
+  skillsCache = null;
+  skillsCacheTime = 0;
+}
+
+module.exports = { callAI, streamAI, loadSkills, invalidateSkillsCache };

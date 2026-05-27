@@ -9,6 +9,7 @@ import ExitCapture from "./pages/ExitCapture";
 import Compliance, { Settings } from "./pages/Compliance";
 import LoginPage from "./pages/LoginPage";
 import LandingPage from "./pages/LandingPage";
+import AdminPage from "./pages/AdminPage";
 import "./styles/globals.css";
 
 export default function App() {
@@ -26,22 +27,24 @@ export default function App() {
 
   useEffect(() => {
     const stored = localStorage.getItem("kros_user");
-    if (stored) setUser(JSON.parse(stored));
+    const token = localStorage.getItem("kros_token");
+    if (stored && token) setUser(JSON.parse(stored));
   }, []);
 
   const handleLogin = (u) => { localStorage.setItem("kros_user", JSON.stringify(u)); setUser(u); };
-  const handleLogout = () => { localStorage.removeItem("kros_user"); setUser(null); };
+  const handleLogout = () => { localStorage.removeItem("kros_user"); localStorage.removeItem("kros_token"); setUser(null); };
 
   if (!user && !showLogin) return <LandingPage onGetStarted={() => setShowLogin(true)} theme={theme} onToggleTheme={toggleTheme} />;
   if (!user) return <LoginPage onLogin={handleLogin} />;
 
   const pages = {
     dashboard:  <Dashboard   user={user} onNavigate={setActivePage} />,
-    skills:     <SkillsLibrary />,
+    skills:     <SkillsLibrary onNavigate={setActivePage} />,
     ask:        <AskClaude   user={user} />,
     succession: <SuccessionMap />,
     exit:       <ExitCapture />,
     compliance: <Compliance />,
+    admin:      <AdminPage   user={user} />,
     settings:   <Settings    user={user} onLogout={handleLogout} />,
   };
 
