@@ -1,31 +1,31 @@
-/* ── Design Tokens ──────────────────────────────────────────── */
+/* ── Design Tokens (Sotheby's-inspired dark) ─────────────────── */
 :root {
-  --navy:       #0D1B2E;
-  --navy-mid:   #1B3A5C;
-  --navy-light: #243F66;
-  --gold:       #C8952A;
-  --gold-light: #E8B84B;
-  --teal:       #1A7A6E;
-  --teal-light: #22A699;
-  --purple:     #6B3FA0;
-  --purple-light:#9B59B6;
-  --purple-dark: #2D1B4E;
+  --navy:       #002349;
+  --navy-mid:   #003366;
+  --navy-light: #004080;
+  --gold:       #BD9042;
+  --gold-light: #D4A854;
+  --teal:       #004D73;
+  --teal-light: #006699;
+  --purple:     #5B3A8C;
+  --purple-light:#7B5CB0;
+  --purple-dark: #3D2560;
   --red:        #B22222;
-  --green:      #1A7A3C;
-  --green-light:#22A350;
+  --green:      #2D7D4A;
+  --green-light:#3DA060;
 
-  --surface-0:  #0A1628;
-  --surface-1:  #0F1F35;
-  --surface-2:  #152847;
-  --surface-3:  #1B3055;
-  --surface-4:  #243A68;
+  --surface-0:  #001526;
+  --surface-1:  #002349;
+  --surface-2:  #00325C;
+  --surface-3:  #004073;
+  --surface-4:  #00508A;
 
-  --border:     rgba(255,255,255,0.08);
-  --border-act: rgba(200,149,42,0.4);
+  --border:     rgba(255,255,255,0.06);
+  --border-act: rgba(189,144,66,0.5);
 
-  --text-primary:   #F0F4F8;
-  --text-secondary: #8BA3BF;
-  --text-muted:     #4A6080;
+  --text-primary:   #F5F0EB;
+  --text-secondary: #B8B0A8;
+  --text-muted:     #6B6360;
 
   --sidebar-w: 240px;
   --radius:    10px;
@@ -523,12 +523,11 @@ body {
   font-family: var(--font-mono);
 }
 
-.badge-green  { background: rgba(26,122,60,0.2);  color: var(--green-light); border: 1px solid rgba(26,122,60,0.4); }
-.badge-gold   { background: rgba(200,149,42,0.2); color: var(--gold-light);  border: 1px solid rgba(200,149,42,0.4); }
+.badge-green  { background: rgba(45,125,74,0.2);  color: var(--green-light); border: 1px solid rgba(45,125,74,0.4); }
+.badge-gold   { background: rgba(189,144,66,0.2); color: var(--gold-light);  border: 1px solid rgba(189,144,66,0.4); }
 .badge-red    { background: rgba(178,34,34,0.2);  color: #FF6B6B;            border: 1px solid rgba(178,34,34,0.4); }
-.badge-purple { background: rgba(107,63,160,0.2); color: var(--purple-light);border: 1px solid rgba(107,63,160,0.4); }
-.badge-teal   { background: rgba(26,122,110,0.2); color: var(--teal-light);  border: 1px solid rgba(26,122,110,0.4); }
-.badge-gold   { background: rgba(200,149,42,0.2); color: var(--gold-light);  border: 1px solid rgba(200,149,42,0.4); }
+.badge-purple { background: rgba(91,58,140,0.2);  color: var(--purple-light);border: 1px solid rgba(91,58,140,0.4); }
+.badge-teal   { background: rgba(0,77,115,0.2);   color: var(--teal-light);  border: 1px solid rgba(0,77,115,0.4); }
 .badge-muted  { background: rgba(255,255,255,0.06); color: var(--text-muted);border: 1px solid var(--border); }
 
 /* ── Tags ────────────────────────────────────────────────────── */
@@ -545,13 +544,13 @@ body {
   text-transform: uppercase;
 }
 
-.tag-ops    { background: rgba(26,122,110,0.18); color: var(--teal-light); }
+.tag-ops    { background: rgba(0,77,115,0.18);   color: var(--teal-light); }
 .tag-hse    { background: rgba(178,34,34,0.18);  color: #FF8080; }
-.tag-hrm    { background: rgba(27,58,92,0.4);    color: #6BAED6; }
-.tag-fin    { background: rgba(200,149,42,0.18); color: var(--gold-light); }
-.tag-proj   { background: rgba(107,63,160,0.18); color: var(--purple-light); }
-.tag-maint  { background: rgba(26,122,60,0.18);  color: var(--green-light); }
-.tag-env    { background: rgba(26,122,60,0.18);  color: var(--green-light); }
+.tag-hrm    { background: rgba(0,51,102,0.4);    color: #8BC4E8; }
+.tag-fin    { background: rgba(189,144,66,0.18); color: var(--gold-light); }
+.tag-proj   { background: rgba(91,58,140,0.18);  color: var(--purple-light); }
+.tag-maint  { background: rgba(45,125,74,0.18);  color: var(--green-light); }
+.tag-env    { background: rgba(45,125,74,0.18);  color: var(--green-light); }
 
 /* ── Search ──────────────────────────────────────────────────── */
 .search-bar {
@@ -910,8 +909,8 @@ body {
 }
 
 .risk-critical { background: rgba(178,34,34,0.2);  color: #FF6B6B;            border: 1px solid rgba(178,34,34,0.4); }
-.risk-managed  { background: rgba(26,122,60,0.2);  color: var(--green-light); border: 1px solid rgba(26,122,60,0.4); }
-.risk-at-risk  { background: rgba(200,149,42,0.2); color: var(--gold-light);  border: 1px solid rgba(200,149,42,0.4); }
+.risk-managed  { background: rgba(45,125,74,0.2);  color: var(--green-light); border: 1px solid rgba(45,125,74,0.4); }
+.risk-at-risk  { background: rgba(189,144,66,0.2); color: var(--gold-light);  border: 1px solid rgba(189,144,66,0.4); }
 
 /* ── Progress Bar ────────────────────────────────────────────── */
 .progress-bar {
@@ -1011,10 +1010,10 @@ tr:hover td { background: rgba(255,255,255,0.02); color: var(--text-primary); }
   line-height: 1.5;
 }
 
-.alert-warn  { background: rgba(200,149,42,0.12); border: 1px solid rgba(200,149,42,0.3); color: var(--gold-light); }
+.alert-warn  { background: rgba(189,144,66,0.12); border: 1px solid rgba(189,144,66,0.3); color: var(--gold-light); }
 .alert-error { background: rgba(178,34,34,0.12);  border: 1px solid rgba(178,34,34,0.3);  color: #FF8080; }
-.alert-info  { background: rgba(26,122,110,0.12); border: 1px solid rgba(26,122,110,0.3); color: var(--teal-light); }
-.alert-ai    { background: rgba(107,63,160,0.12); border: 1px solid rgba(107,63,160,0.3); color: var(--purple-light); }
+.alert-info  { background: rgba(0,77,115,0.12);   border: 1px solid rgba(0,77,115,0.3);  color: var(--teal-light); }
+.alert-ai    { background: rgba(91,58,140,0.12);  border: 1px solid rgba(91,58,140,0.3);  color: var(--purple-light); }
 
 /* ── Loading ─────────────────────────────────────────────────── */
 .loading-dots {
@@ -1219,8 +1218,8 @@ tr:hover td { background: rgba(255,255,255,0.02); color: var(--text-primary); }
   border-radius: 20px;
   font-size: 11px;
   font-family: var(--font-mono);
-  background: rgba(200,149,42,0.1);
-  border: 1px solid rgba(200,149,42,0.3);
+  background: rgba(189,144,66,0.1);
+  border: 1px solid rgba(189,144,66,0.3);
   color: var(--gold-light);
   margin-bottom: 24px;
   letter-spacing: 1px;
@@ -1327,7 +1326,7 @@ tr:hover td { background: rgba(255,255,255,0.02); color: var(--text-primary); }
   justify-content: center;
   font-size: 20px;
   background: linear-gradient(135deg, var(--navy-mid), var(--purple-dark));
-  border: 1px solid rgba(200,149,42,0.3);
+  border: 1px solid rgba(189,144,66,0.3);
   margin-bottom: 16px;
 }
 
