@@ -30,7 +30,7 @@ const NAV_ITEMS = [
 
 const ADMIN_ITEM = { id: "admin", icon: "◈", label: "Admin", section: "SYSTEM" };
 
-export default function Sidebar({ user, activePage, onNavigate, onLogout, theme, onToggleTheme, onNotif }) {
+export default function Sidebar({ user, activePage, onNavigate, onLogout, theme, onToggleTheme }) {
   const { notifications, activeEngine, aiEngines } = useKROS();
   const engine = aiEngines[activeEngine];
   const urgentCount = notifications.filter(n => n.type === "urgent").length;

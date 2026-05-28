@@ -62,7 +62,6 @@ export default function AssetManagement() {
   const [tab, setTab] = useState("overview");
   const [filterType, setFilterType] = useState("All");
   const [filterStatus, setFilterStatus] = useState("All");
-  const [showAdd, setShowAdd] = useState(false);
 
   const filtered = ASSETS.filter(a => (filterType === "All" || a.type === filterType) && (filterStatus === "All" || a.status === filterStatus));
   const totalLoanBalance = ASSETS.reduce((s, a) => s + a.loanBalance, 0);

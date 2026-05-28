@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const ALERTS = [
   { id: 1, module: "License", message: "Sungai Lembing mining license expiry in 7 days", severity: "critical", time: "2m ago", read: false },

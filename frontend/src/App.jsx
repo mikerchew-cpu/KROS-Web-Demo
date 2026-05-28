@@ -1,37 +1,38 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { KROSProvider } from "./context/KROSContext";
 import Sidebar from "./components/Sidebar";
 import GlobalSearch from "./components/GlobalSearch";
 import QuickActions from "./components/QuickActions";
 import NotificationCenter from "./components/NotificationCenter";
 import Dashboard from "./pages/Dashboard";
-import SkillsLibrary from "./pages/SkillsLibrary";
-import AskClaude from "./pages/AskClaude";
-import SuccessionMap from "./pages/SuccessionMap";
-import ExitCapture from "./pages/ExitCapture";
-import Compliance, { Settings } from "./pages/Compliance";
 import LoginPage from "./pages/LoginPage";
 import LandingPage from "./pages/LandingPage";
-import AdminPage from "./pages/AdminPage";
-import Workflow from "./pages/Workflow";
-import MineAnalysis from "./pages/MineAnalysis";
-import ProductionAnalysis from "./pages/ProductionAnalysis";
-import UserManual from "./pages/UserManual";
-import ProductionBoard from "./pages/ProductionBoard";
-import ShiftHandover from "./pages/ShiftHandover";
-import SafetyObservation from "./pages/SafetyObservation";
-import Weightbridge from "./pages/Weightbridge";
-import GradeControl from "./pages/GradeControl";
-import StockpileManager from "./pages/StockpileManager";
-import BlastDashboard from "./pages/BlastDashboard";
-import EnvironmentalMonitor from "./pages/EnvironmentalMonitor";
-import PredictiveMaintenance from "./pages/PredictiveMaintenance";
-import ExecutiveReport from "./pages/ExecutiveReport";
-import TrainingMatrix from "./pages/TrainingMatrix";
-import WeatherDashboard from "./pages/WeatherDashboard";
-import HRMModule from "./pages/HRMModule";
-import AssetManagement from "./pages/AssetManagement";
+import Compliance, { Settings } from "./pages/Compliance";
 import "./styles/globals.css";
+
+const SkillsLibrary = lazy(() => import("./pages/SkillsLibrary"));
+const AskClaude = lazy(() => import("./pages/AskClaude"));
+const SuccessionMap = lazy(() => import("./pages/SuccessionMap"));
+const ExitCapture = lazy(() => import("./pages/ExitCapture"));
+const AdminPage = lazy(() => import("./pages/AdminPage"));
+const Workflow = lazy(() => import("./pages/Workflow"));
+const MineAnalysis = lazy(() => import("./pages/MineAnalysis"));
+const ProductionAnalysis = lazy(() => import("./pages/ProductionAnalysis"));
+const UserManual = lazy(() => import("./pages/UserManual"));
+const ProductionBoard = lazy(() => import("./pages/ProductionBoard"));
+const ShiftHandover = lazy(() => import("./pages/ShiftHandover"));
+const SafetyObservation = lazy(() => import("./pages/SafetyObservation"));
+const Weightbridge = lazy(() => import("./pages/Weightbridge"));
+const GradeControl = lazy(() => import("./pages/GradeControl"));
+const StockpileManager = lazy(() => import("./pages/StockpileManager"));
+const BlastDashboard = lazy(() => import("./pages/BlastDashboard"));
+const EnvironmentalMonitor = lazy(() => import("./pages/EnvironmentalMonitor"));
+const PredictiveMaintenance = lazy(() => import("./pages/PredictiveMaintenance"));
+const ExecutiveReport = lazy(() => import("./pages/ExecutiveReport"));
+const TrainingMatrix = lazy(() => import("./pages/TrainingMatrix"));
+const WeatherDashboard = lazy(() => import("./pages/WeatherDashboard"));
+const HRMModule = lazy(() => import("./pages/HRMModule"));
+const AssetManagement = lazy(() => import("./pages/AssetManagement"));
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -118,7 +119,7 @@ export default function App() {
   return (
     <KROSProvider>
       <div className="app-shell">
-        <Sidebar user={user} activePage={activePage} onNavigate={setActivePage} onLogout={handleLogout} theme={theme} onToggleTheme={cycleTheme} onNotif={() => setShowNotif(true)} />
+        <Sidebar user={user} activePage={activePage} onNavigate={setActivePage} onLogout={handleLogout} theme={theme} onToggleTheme={cycleTheme} />
         <div className="main-area">
           <header className="top-bar">
             <GlobalSearch onNavigate={setActivePage} />
@@ -130,7 +131,9 @@ export default function App() {
             </div>
           </header>
           <main className="main-content">
-            {pages[activePage] || <Dashboard user={user} onNavigate={setActivePage} />}
+            <Suspense fallback={<div className="page-loading"><div className="loading-dots" style={{ justifyContent: "center", padding: 40 }}><span/><span/><span/></div></div>}>
+              {pages[activePage] || <Dashboard user={user} onNavigate={setActivePage} />}
+            </Suspense>
           </main>
         </div>
       </div>

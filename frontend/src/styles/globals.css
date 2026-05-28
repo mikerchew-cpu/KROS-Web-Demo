@@ -2093,6 +2093,8 @@ tr:hover td { background: rgba(255,255,255,0.02); color: var(--text-primary); }
 .manual-ai-response { white-space: pre-wrap; }
 .manual-ai-response strong { color: var(--text-primary); }
 
+.page-loading { min-height: 200px; display: flex; align-items: center; justify-content: center; }
+
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 1200px) {
   .forecast-row { grid-template-columns: repeat(3,1fr); }
@@ -2181,3 +2183,4 @@ tr:hover td { background: rgba(255,255,255,0.02); color: var(--text-primary); }
   .location-bar { flex-direction: column; align-items: stretch; }
   .loc-chip { text-align: center; }
   .loc-elevation { margin-left: 0; text-align: center; }
+}

@@ -28,7 +28,6 @@ function daysUntil(d) { return Math.ceil((new Date(d) - new Date()) / (1000*60*6
 
 export default function TrainingMatrix() {
   const [view, setView] = useState("matrix");
-  const [filter, setFilter] = useState("all");
 
   const expireSoon = [];
   STAFF.forEach(s => Object.entries(s.trainings).forEach(([mod, t]) => {
