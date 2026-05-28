@@ -75,7 +75,7 @@ export default function Sidebar({ user, activePage, onNavigate, onLogout, theme,
           <span className="ai-engine-label">{engine.emoji} {engine.name}</span>
         </div>
         <button onClick={onToggleTheme} className="btn btn-ghost btn-sm" style={{ width: "100%", justifyContent: "center", fontSize: 12, gap: 6, marginBottom: 8 }}>
-          {theme === "dark" ? "☀️ Light" : "🌙 Dark"}
+          {theme === "dark" ? "☀️" : theme === "light" ? "🌙" : "⚙"} {theme === "system" ? "Auto" : theme === "dark" ? "Light" : "Dark"}
         </button>
         <div className="user-card" onClick={onLogout} title="Sign out">
           <div className="user-avatar">{initials}</div>

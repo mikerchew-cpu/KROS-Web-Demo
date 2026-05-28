@@ -36,16 +36,36 @@ import "./styles/globals.css";
 export default function App() {
   const [user, setUser] = useState(null);
   const [activePage, setActivePage] = useState("dashboard");
-  const [theme, setTheme] = useState(() => localStorage.getItem("kros_theme") || "dark");
+  const [theme, setTheme] = useState(() => localStorage.getItem("kros_theme") || "system");
   const [showLogin, setShowLogin] = useState(false);
   const [showNotif, setShowNotif] = useState(false);
 
+  const getEffectiveTheme = (t) => {
+    if (t === "system") {
+      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    return t;
+  };
+
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
+    const effective = getEffectiveTheme(theme);
+    document.documentElement.setAttribute("data-theme", effective);
     localStorage.setItem("kros_theme", theme);
   }, [theme]);
 
-  const toggleTheme = () => setTheme(prev => prev === "dark" ? "light" : "dark");
+  useEffect(() => {
+    if (theme !== "system") return;
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = () => {
+      document.documentElement.setAttribute("data-theme", mq.matches ? "dark" : "light");
+    };
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, [theme]);
+
+  const cycleTheme = () => {
+    setTheme(prev => prev === "dark" ? "light" : prev === "light" ? "system" : "dark");
+  };
   window.__KROS_NAV = setActivePage;
 
   useEffect(() => {
@@ -63,7 +83,7 @@ export default function App() {
   const handleLogin = (u) => { localStorage.setItem("kros_user", JSON.stringify(u)); setUser(u); setActivePage("dashboard"); };
   const handleLogout = () => { localStorage.removeItem("kros_user"); localStorage.removeItem("kros_token"); setShowLogin(false); setUser(null); };
 
-  if (!user && !showLogin) return <LandingPage onGetStarted={() => setShowLogin(true)} theme={theme} onToggleTheme={toggleTheme} />;
+  if (!user && !showLogin) return <LandingPage onGetStarted={() => setShowLogin(true)} theme={theme} onToggleTheme={cycleTheme} />;
   if (!user) return <LoginPage onLogin={handleLogin} />;
 
   const pages = {
@@ -98,7 +118,7 @@ export default function App() {
   return (
     <KROSProvider>
       <div className="app-shell">
-        <Sidebar user={user} activePage={activePage} onNavigate={setActivePage} onLogout={handleLogout} theme={theme} onToggleTheme={toggleTheme} onNotif={() => setShowNotif(true)} />
+        <Sidebar user={user} activePage={activePage} onNavigate={setActivePage} onLogout={handleLogout} theme={theme} onToggleTheme={cycleTheme} onNotif={() => setShowNotif(true)} />
         <div className="main-area">
           <header className="top-bar">
             <GlobalSearch onNavigate={setActivePage} />
