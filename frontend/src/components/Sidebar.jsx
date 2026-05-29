@@ -3,6 +3,7 @@ import { useKROS } from "../context/KROSContext";
 const NAV_ITEMS = [
   { id: "dashboard",  icon: "⬡", label: "Dashboard" },
   { id: "ask",        icon: "✦", label: "Ask AI",           section: "AI" },
+  { id: "ai-providers",icon: "⚙", label: "AI Providers" },
   { id: "skills",     icon: "◫", label: "Skills Library" },
   { id: "prod-board", icon: "📊",label: "Production Board",  section: "OPERATIONS" },
   { id: "hrm",        icon: "👥", label: "HRM" },

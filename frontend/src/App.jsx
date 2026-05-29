@@ -33,6 +33,7 @@ const TrainingMatrix = lazy(() => import("./pages/TrainingMatrix"));
 const WeatherDashboard = lazy(() => import("./pages/WeatherDashboard"));
 const HRMModule = lazy(() => import("./pages/HRMModule"));
 const AssetManagement = lazy(() => import("./pages/AssetManagement"));
+const AIProviders = lazy(() => import("./pages/AIProviders"));
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -114,6 +115,7 @@ export default function App() {
     "weather":       <WeatherDashboard />,
     "hrm":           <HRMModule />,
     "assets":        <AssetManagement />,
+    "ai-providers":  <AIProviders />,
   };
 
   return (
